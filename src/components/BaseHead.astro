@@ -1,0 +1,83 @@
+---
+import { person } from '../data/site';
+import { url, absoluteUrl } from '../lib/url';
+import sansFont from '../assets/fonts/ibm-plex-sans-latin-wght-normal.woff2?url';
+import monoFont from '../assets/fonts/ibm-plex-mono-latin-400-normal.woff2?url';
+import serifFont from '../assets/fonts/source-serif-4-latin-wght-normal.woff2?url';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** App-absolute path of this page, used for the canonical URL. */
+  path: string;
+  /** 'website' for index pages, 'article' for case studies. */
+  ogType?: 'website' | 'article';
+  /** Structured data injected verbatim. */
+  jsonLd?: Record<string, unknown>;
+}
+
+const { title, description, path, ogType = 'website', jsonLd } = Astro.props;
+
+const canonical = absoluteUrl(path, Astro.site);
+const ogImage = absoluteUrl('/og/joel-okore-og.jpg', Astro.site);
+const fullTitle = path === '/' ? title : `${title} — ${person.siteName}`;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta name="author" content={person.fullName} />
+
+<!-- Icons -->
+<link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+<link rel="alternate icon" href={url('/favicon.ico')} sizes="32x32" />
+<link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+<meta name="theme-color" content="#faf9f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0b0c0e" media="(prefers-color-scheme: dark)" />
+
+<!-- Critical faces: every above-the-fold string uses one of these three. -->
+<link rel="preload" as="font" type="font/woff2" href={sansFont} crossorigin="anonymous" />
+<link rel="preload" as="font" type="font/woff2" href={serifFont} crossorigin="anonymous" />
+<link rel="preload" as="font" type="font/woff2" href={monoFont} crossorigin="anonymous" />
+
+<!-- Open Graph -->
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={`${person.siteName} — ${person.title}`} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:alt" content={`${person.fullName} — ${person.title}`} />
+<meta property="og:locale" content="en_GB" />
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<link rel="sitemap" href={url('/sitemap-index.xml')} />
+
+{jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
+
+<!-- Stamp the stored theme before first paint so there is no flash. -->
+<script is:inline>
+  (() => {
+    try {
+      const stored = localStorage.getItem('theme');
+      if (stored === 'light' || stored === 'dark') {
+        document.documentElement.dataset.theme = stored;
+      }
+    } catch (error) {
+      /* storage blocked — fall back to the system preference */
+    }
+  })();
+</script>

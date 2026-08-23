@@ -1,0 +1,57 @@
+---
+interface Props {
+  items: readonly string[];
+  label?: string;
+  variant?: 'chip' | 'inline';
+  /** Must match the surrounding document outline. */
+  headingLevel?: 2 | 3 | 4;
+}
+
+const { items, label, variant = 'chip', headingLevel = 2 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
+---
+
+<div class="tags">
+  {label && <Heading class="label tags__label">{label}</Heading>}
+  <ul class:list={['tags__list', `tags__list--${variant}`]} role="list">
+    {items.map((item) => <li class="tags__item">{item}</li>)}
+  </ul>
+</div>
+
+<style>
+  .tags__label {
+    margin-block-end: var(--s-3);
+  }
+
+  .tags__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin: 0;
+    padding: 0;
+  }
+
+  .tags__item {
+    font-family: var(--font-mono);
+    font-size: var(--t-tiny);
+    line-height: 1.4;
+    color: var(--c-ink-muted);
+  }
+
+  .tags__list--chip .tags__item {
+    padding: 0.24rem 0.5rem;
+    border: var(--hairline) solid var(--c-rule);
+    border-radius: var(--radius);
+    background: var(--c-surface);
+  }
+
+  .tags__list--inline {
+    gap: 0;
+  }
+
+  .tags__list--inline .tags__item:not(:last-child)::after {
+    content: '·';
+    margin-inline: 0.5em;
+    color: var(--c-rule-strong);
+  }
+</style>

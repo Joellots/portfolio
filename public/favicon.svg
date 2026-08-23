@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Joel Okore">
+  <rect width="32" height="32" rx="5" fill="#B4341F"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.5 23 16 10.5 24.5 23"/>
+  </g>
+  <circle cx="7.5" cy="23" r="3" fill="#FFFFFF"/>
+  <circle cx="24.5" cy="23" r="3" fill="#FFFFFF"/>
+  <circle cx="16" cy="10.5" r="3.4" fill="#FFFFFF"/>
+</svg>

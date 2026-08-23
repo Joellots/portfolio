@@ -1,0 +1,215 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Section from '../components/Section.astro';
+import ActionLink from '../components/ActionLink.astro';
+import { person, socials } from '../data/site';
+import { url } from '../lib/url';
+
+const description =
+  'Contact Joel Okore — security engineer and researcher. Email, GitHub and LinkedIn, plus what I am currently interested in hearing about.';
+
+const topics = [
+  {
+    title: 'Research collaboration',
+    detail:
+      'Encrypted-traffic analysis, explainable detection, graph-based methods for security, and anything at the intersection of combinatorics and network structure.',
+  },
+  {
+    title: 'Engineering and research roles',
+    detail:
+      'Detection engineering, security automation and applied machine learning — particularly where the work involves making a model’s output defensible, not just accurate.',
+  },
+  {
+    title: 'Teaching and mentoring',
+    detail:
+      'Computer networks, cybersecurity and distributed systems. I currently run laboratory sessions and mentor students at Innopolis University.',
+  },
+  {
+    title: 'Questions about the work',
+    detail:
+      'If something in a case study is unclear, contradicts your own results, or you want detail that is not published here — please ask.',
+  },
+];
+---
+
+<BaseLayout title="Contact" description={description} path="/contact">
+  <PageHeader
+    eyebrow="Contact"
+    title="Get in touch"
+    lead="Email is the most reliable way to reach me. I read everything, and I reply to anything that is not automated."
+  />
+
+  <div class="shell">
+    <!-- ==================================================== direct -->
+    <Section index="01" id="channels" title="Channels">
+      <ul class="channels" role="list">
+        {
+          socials.map((item) => (
+            <li class="channel">
+              <span class="label channel__label">{item.label}</span>
+              <a
+                class="channel__link"
+                href={item.href}
+                rel={item.external ? 'me noopener noreferrer' : 'me'}
+                target={item.external ? '_blank' : undefined}
+              >
+                {item.handle}
+                <span class="channel__arrow" aria-hidden="true">
+                  →
+                </span>
+              </a>
+            </li>
+          ))
+        }
+        <li class="channel">
+          <span class="label channel__label">CV</span>
+          <a class="channel__link" href={url(person.cvPath)} download>
+            {person.fullName} — CV (PDF)
+            <span class="channel__arrow" aria-hidden="true">↓</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="channels__actions">
+        <ActionLink href={`mailto:${person.email}`} variant="solid">
+          Email {person.displayName}
+        </ActionLink>
+        <p class="channels__note">
+          No contact form, no tracking, no analytics. The site is static; the only thing it stores
+          is your light/dark preference, in your own browser.
+        </p>
+      </div>
+    </Section>
+
+    <!-- ===================================================== topics -->
+    <Section index="02" id="topics" title="What I’d like to hear about">
+      <ul class="topics" role="list">
+        {
+          topics.map((topic, i) => (
+            <li class="topic">
+              <span class="topic__index mono" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="topic__title">{topic.title}</h3>
+              <p class="topic__detail">{topic.detail}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </Section>
+
+    <!-- ==================================================== elsewhere -->
+    <Section index="03" id="next" title="Elsewhere on this site">
+      <div class="next">
+        <ActionLink href={url('/projects')}>Case studies</ActionLink>
+        <ActionLink href={url('/about')}>Background and publications</ActionLink>
+      </div>
+    </Section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* --------------------------------------------------------- channels */
+
+  .channels {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    border-block-start: var(--hairline) solid var(--c-rule);
+  }
+
+  .channel {
+    display: grid;
+    gap: var(--s-1) var(--s-5);
+    padding-block: var(--s-4);
+    border-block-end: var(--hairline) solid var(--c-rule);
+  }
+
+  .channel__label {
+    padding-block-start: 0.35rem;
+  }
+
+  .channel__link {
+    font-size: var(--t-h4);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    word-break: break-word;
+  }
+
+  .channel__arrow {
+    display: inline-block;
+    margin-inline-start: 0.35em;
+    color: var(--c-accent);
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .channel__link:hover .channel__arrow {
+    transform: translateX(3px);
+  }
+
+  .channels__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-4) var(--s-6);
+    margin-block-start: var(--s-6);
+  }
+
+  .channels__note {
+    font-size: 0.875rem;
+    color: var(--c-ink-muted);
+    max-inline-size: 42ch;
+  }
+
+  @media (min-width: 40rem) {
+    .channel {
+      grid-template-columns: 6rem 1fr;
+      align-items: baseline;
+    }
+  }
+
+  /* ----------------------------------------------------------- topics */
+
+  .topics {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-5);
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+
+  .topic {
+    display: grid;
+    align-content: start;
+    gap: var(--s-2);
+    padding-block-start: var(--s-4);
+    border-block-start: 2px solid var(--c-rule-strong);
+  }
+
+  .topic__index {
+    font-size: var(--t-micro);
+    color: var(--c-accent);
+    letter-spacing: 0.08em;
+  }
+
+  .topic__title {
+    font-size: var(--t-h4);
+    font-weight: 550;
+  }
+
+  .topic__detail {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--c-ink-muted);
+  }
+
+  /* ------------------------------------------------------------- next */
+
+  .next {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+</style>

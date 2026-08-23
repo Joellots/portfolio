@@ -1,0 +1,453 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ActionLink from '../components/ActionLink.astro';
+import { person, bioShort, experience, education, publications, socials } from '../data/site';
+import { url, absoluteUrl } from '../lib/url';
+import portrait from '../assets/images/joel-portrait.jpg';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const featured = projects.filter((p) => p.data.featured);
+
+const currentRole = experience[0]!;
+const focusAreas = [
+  'Encrypted traffic analysis',
+  'Explainable detection',
+  'Graph-based learning',
+] as const;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: person.fullName,
+  alternateName: person.siteName,
+  jobTitle: person.title,
+  description: person.metaDescription,
+  email: `mailto:${person.email}`,
+  url: absoluteUrl('/', Astro.site),
+  image: absoluteUrl('/og/joel-okore-og.jpg', Astro.site),
+  sameAs: socials.filter((s) => s.external).map((s) => s.href),
+  knowsAbout: [
+    'Network security',
+    'Encrypted traffic analysis',
+    'Explainable artificial intelligence',
+    'Graph representation learning',
+    'Intrusion detection',
+    'Security automation',
+  ],
+  alumniOf: education.map((study) => ({
+    '@type': 'CollegeOrUniversity',
+    name: study.org,
+  })),
+};
+---
+
+<BaseLayout
+  title={`${person.siteName} — ${person.title}`}
+  description={person.metaDescription}
+  path="/"
+  jsonLd={jsonLd}
+>
+  <!-- ============================================================ hero -->
+  <div class="hero">
+    <div class="shell hero__inner">
+      <div class="hero__text">
+        <p class="label hero__eyebrow">
+          <span class="hero__dot" aria-hidden="true"></span>
+          {person.location}
+        </p>
+
+        <h1 class="hero__heading">
+          <span class="hero__name">{person.fullName}</span>
+          <span class="hero__role">{person.title}</span>
+        </h1>
+
+        <p class="hero__tagline">{person.tagline}</p>
+
+        <ul class="hero__focus" role="list">
+          {focusAreas.map((area) => <li>{area}</li>)}
+        </ul>
+
+        <div class="hero__actions">
+          <ActionLink href={url('/projects')} variant="solid">View projects</ActionLink>
+          <ActionLink href={url(person.cvPath)} download>
+            Download CV
+            <span class="hero__hint mono" aria-hidden="true">PDF</span>
+          </ActionLink>
+          <ActionLink href={`mailto:${person.email}`} variant="quiet">
+            {person.email}
+          </ActionLink>
+        </div>
+      </div>
+
+      <figure class="hero__figure">
+        <div class="hero__frame">
+          <Image
+            src={portrait}
+            alt="Okore Joel Chidike, photographed outdoors in a tailored suit."
+            widths={[320, 480, 640]}
+            sizes="(min-width: 62rem) 22rem, (min-width: 48rem) 40vw, 70vw"
+            loading="eager"
+            fetchpriority="high"
+            decoding="sync"
+            quality={82}
+          />
+        </div>
+        <figcaption class="mono hero__caption">{person.fullName}</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <div class="shell">
+    <!-- ================================================= selected work -->
+    <Section
+      index="01"
+      id="work"
+      title="Selected work"
+      action={{ label: 'All projects', href: url('/projects') }}
+    >
+      <div class="work">
+        {
+          featured.map((project, i) => (
+            <div class:list={['work__cell', i === 0 && 'work__cell--wide']}>
+              <ProjectCard
+                project={project}
+                index={String(project.data.order).padStart(2, '0')}
+                feature={i === 0}
+              />
+            </div>
+          ))
+        }
+      </div>
+    </Section>
+
+    <!-- ==================================================== background -->
+    <Section index="02" id="background" title="Background">
+      <div class="background">
+        <div class="prose background__prose">
+          {bioShort.map((paragraph) => <p>{paragraph}</p>)}
+          <p class="background__more">
+            <a href={url('/about')}>Read the full background <span aria-hidden="true">→</span></a>
+          </p>
+        </div>
+
+        <dl class="facts">
+          <div class="facts__row">
+            <dt class="label">Now</dt>
+            <dd>
+              <p class="facts__primary">{currentRole.title}</p>
+              <p class="facts__secondary">{currentRole.org}</p>
+              <p class="facts__meta mono">{currentRole.period}</p>
+            </dd>
+          </div>
+          {
+            education.slice(0, 2).map((study) => (
+              <div class="facts__row">
+                <dt class="label">{study.credential.startsWith('MSc') ? 'MSc' : 'BSc'}</dt>
+                <dd>
+                  <p class="facts__primary">{study.credential.replace(/^\w+,\s*/, '')}</p>
+                  <p class="facts__secondary">{study.org}</p>
+                  <p class="facts__meta mono">{study.period}</p>
+                </dd>
+              </div>
+            ))
+          }
+          <div class="facts__row">
+            <dt class="label">Paper</dt>
+            <dd>
+              <p class="facts__primary">{publications[0]!.title}</p>
+              <p class="facts__secondary">{publications[0]!.venue}</p>
+              <p class="facts__meta mono">{publications[0]!.year}</p>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </Section>
+
+    <!-- ======================================================= contact -->
+    <Section index="03" id="contact" title="Get in touch">
+      <div class="outro">
+        <p class="outro__lead">
+          I’m open to research collaboration, and to engineering and research roles in detection,
+          security automation and applied machine learning.
+        </p>
+        <div class="outro__actions">
+          <ActionLink href={url('/contact')} variant="solid">Contact</ActionLink>
+          <ActionLink href={url('/about')}>About me</ActionLink>
+        </div>
+      </div>
+    </Section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* ------------------------------------------------------------- hero */
+
+  .hero {
+    border-block-end: var(--hairline) solid var(--c-rule);
+    background: linear-gradient(to bottom, var(--c-bg-sunken), var(--c-bg) 70%);
+  }
+
+  .hero__inner {
+    display: grid;
+    gap: var(--s-7);
+    padding-block: clamp(2.75rem, 1.5rem + 5vw, 5.5rem) clamp(2.25rem, 1.5rem + 3vw, 4rem);
+  }
+
+  .hero__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-block-end: var(--s-5);
+  }
+
+  .hero__dot {
+    inline-size: 0.4rem;
+    block-size: 0.4rem;
+    border-radius: 50%;
+    background: var(--c-accent);
+  }
+
+  .hero__heading {
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .hero__name {
+    display: block;
+    font-size: var(--t-display);
+    font-weight: 500;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  .hero__role {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: clamp(0.8125rem, 0.72rem + 0.4vw, 1rem);
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-accent);
+  }
+
+  .hero__tagline {
+    margin-block-start: var(--s-5);
+    max-inline-size: 40rem;
+    font-family: var(--font-serif);
+    font-size: var(--t-lead);
+    line-height: 1.5;
+    color: var(--c-ink-muted);
+  }
+
+  .hero__focus {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) 0;
+    margin-block-start: var(--s-5);
+    padding-block-start: var(--s-5);
+    border-block-start: var(--hairline) solid var(--c-rule);
+    list-style: none;
+  }
+
+  .hero__focus li {
+    font-family: var(--font-mono);
+    font-size: var(--t-tiny);
+    letter-spacing: 0.04em;
+    color: var(--c-ink-muted);
+  }
+
+  .hero__focus li:not(:last-child)::after {
+    content: '/';
+    margin-inline: 0.75em;
+    color: var(--c-rule-strong);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3) var(--s-4);
+    margin-block-start: var(--s-6);
+  }
+
+  .hero__hint {
+    font-size: var(--t-micro);
+    color: var(--c-ink-faint);
+    letter-spacing: 0.08em;
+  }
+
+  /* -- portrait plate ---------------------------------------------------- */
+
+  .hero__figure {
+    margin: 0;
+    max-inline-size: 20rem;
+  }
+
+  .hero__frame {
+    padding: 0.5rem;
+    background: var(--c-surface);
+    border: var(--hairline) solid var(--c-rule);
+    border-radius: var(--radius-lg);
+  }
+
+  .hero__frame :global(img) {
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 1px;
+    background: var(--c-bg-sunken);
+  }
+
+  .hero__caption {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-micro);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+  }
+
+  @media (min-width: 48rem) {
+    .hero__inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+      gap: var(--s-8);
+    }
+
+    .hero__figure {
+      inline-size: clamp(13rem, 26vw, 20rem);
+      max-inline-size: none;
+      margin-block-start: 0.4rem;
+    }
+  }
+
+  /* --------------------------------------------------------- work grid */
+
+  .work {
+    display: grid;
+    gap: var(--s-4);
+  }
+
+  @media (min-width: 56rem) {
+    .work {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .work__cell--wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* --------------------------------------------------------- background */
+
+  .background {
+    display: grid;
+    gap: var(--s-7);
+  }
+
+  .background__prose {
+    max-inline-size: var(--w-text);
+  }
+
+  .background__more a {
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    text-decoration: none;
+    color: var(--c-accent);
+  }
+
+  .background__more a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .facts {
+    margin: 0;
+    display: grid;
+    align-content: start;
+  }
+
+  .facts__row {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: var(--s-4);
+    padding-block: var(--s-4);
+    border-block-start: var(--hairline) solid var(--c-rule);
+  }
+
+  .facts__row:first-child {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  .facts dt {
+    padding-block-start: 0.2rem;
+  }
+
+  .facts dd {
+    margin: 0;
+  }
+
+  .facts__primary {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .facts__secondary {
+    font-size: 0.875rem;
+    color: var(--c-ink-muted);
+    margin-block-start: 0.15rem;
+  }
+
+  .facts__meta {
+    font-size: var(--t-micro);
+    color: var(--c-ink-faint);
+    margin-block-start: 0.3rem;
+    letter-spacing: 0.04em;
+  }
+
+  @media (min-width: 62rem) {
+    .background {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: var(--s-9);
+    }
+  }
+
+  /* -------------------------------------------------------------- outro */
+
+  .outro {
+    display: grid;
+    gap: var(--s-5);
+    padding: var(--s-6);
+    border: var(--hairline) solid var(--c-rule);
+    border-radius: var(--radius-lg);
+    background: var(--c-surface);
+  }
+
+  .outro__lead {
+    font-family: var(--font-serif);
+    font-size: var(--t-lead);
+    line-height: 1.5;
+    max-inline-size: 46ch;
+  }
+
+  .outro__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+
+  @media (min-width: 48rem) {
+    .outro {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--s-7);
+      padding: var(--s-7);
+    }
+  }
+</style>

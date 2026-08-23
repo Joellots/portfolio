@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ActionLink from '../components/ActionLink.astro';
+import { url } from '../lib/url';
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page does not exist. Browse the case studies, background and contact details for Joel Okore, security engineer and researcher."
+  path="/404"
+>
+  <div class="shell notfound">
+    <p class="label label--accent">Error 404</p>
+    <h1>This page does not exist</h1>
+    <p class="notfound__body">
+      The address you followed does not match anything on this site. It may have been renamed, or
+      the link may have been mistyped.
+    </p>
+    <div class="notfound__actions">
+      <ActionLink href={url('/')} variant="solid">Home</ActionLink>
+      <ActionLink href={url('/projects')}>Projects</ActionLink>
+      <ActionLink href={url('/contact')} variant="quiet">Contact</ActionLink>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .notfound {
+    padding-block: clamp(4rem, 3rem + 6vw, 8rem);
+    max-inline-size: 36rem;
+  }
+
+  .notfound h1 {
+    margin-block-start: var(--s-4);
+  }
+
+  .notfound__body {
+    margin-block-start: var(--s-5);
+    font-family: var(--font-serif);
+    font-size: var(--t-body);
+    line-height: var(--lh-prose);
+    color: var(--c-ink-muted);
+  }
+
+  .notfound__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-block-start: var(--s-6);
+  }
+</style>

@@ -1,0 +1,28 @@
+---
+/**
+ * Identity mark: three nodes joined by two edges — a graph path and a signal
+ * trace at the same time. Inherits currentColor so it works in both themes.
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 22, class: className } = Astro.props;
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.6"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d="M4 17.5 12 6.5 20 17.5" stroke-linecap="round" stroke-linejoin="round"></path>
+  <circle cx="4" cy="17.5" r="2.4" fill="var(--c-bg)"></circle>
+  <circle cx="12" cy="6.5" r="2.4" fill="currentColor" stroke="none"></circle>
+  <circle cx="20" cy="17.5" r="2.4" fill="var(--c-bg)"></circle>
+</svg>

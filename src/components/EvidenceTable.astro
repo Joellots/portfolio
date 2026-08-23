@@ -1,0 +1,115 @@
+---
+interface Evidence {
+  label: string;
+  value: string;
+  note: string;
+}
+
+interface Props {
+  items: readonly Evidence[];
+  caption?: string;
+}
+
+const { items, caption } = Astro.props;
+---
+
+<!-- tabindex makes the horizontal scroll reachable by keyboard on narrow
+     viewports; role+label give it a name in the accessibility tree. -->
+<div class="evidence" role="region" aria-label={caption ?? 'Measured results'} tabindex="0">
+  <table class="evidence__table">
+    {caption && <caption class="evidence__caption">{caption}</caption>}
+    <thead>
+      <tr>
+        <th scope="col">Measure</th>
+        <th scope="col">Result</th>
+        <th scope="col">Scope</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        items.map((item) => (
+          <tr>
+            <th scope="row">{item.label}</th>
+            <td class="evidence__value mono">{item.value}</td>
+            <td class="evidence__note">{item.note}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .evidence {
+    overflow-x: auto;
+    border: var(--hairline) solid var(--c-rule);
+    border-radius: var(--radius-lg);
+    background: var(--c-surface);
+  }
+
+  .evidence__table {
+    inline-size: 100%;
+    min-inline-size: 30rem;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .evidence__caption {
+    padding: var(--s-4) var(--s-5) 0;
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+
+  .evidence__table th,
+  .evidence__table td {
+    padding: var(--s-3) var(--s-4);
+    vertical-align: baseline;
+  }
+
+  @media (min-width: 40rem) {
+    .evidence__table th,
+    .evidence__table td {
+      padding-inline: var(--s-5);
+    }
+  }
+
+  .evidence__table thead th {
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    font-weight: 500;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+    border-block-end: var(--hairline) solid var(--c-rule);
+    padding-block: var(--s-3);
+  }
+
+  .evidence__table tbody tr + tr th,
+  .evidence__table tbody tr + tr td {
+    border-block-start: var(--hairline) solid var(--c-rule);
+  }
+
+  .evidence__table tbody th {
+    font-weight: 500;
+    font-size: 0.9375rem;
+    inline-size: 30%;
+  }
+
+  .evidence__value {
+    font-size: var(--t-h4);
+    font-weight: 500;
+    color: var(--c-accent);
+    white-space: nowrap;
+    inline-size: 18%;
+  }
+
+  .evidence__note {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--c-ink-muted);
+  }
+</style>

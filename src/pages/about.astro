@@ -1,0 +1,552 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Section from '../components/Section.astro';
+import Ledger from '../components/Ledger.astro';
+import ActionLink from '../components/ActionLink.astro';
+import {
+  person,
+  bio,
+  researchInterests,
+  experience,
+  education,
+  publications,
+  awards,
+  capabilities,
+  spokenLanguages,
+} from '../data/site';
+import { url } from '../lib/url';
+import portraitSquare from '../assets/images/joel-portrait-square.jpg';
+import commencement from '../assets/images/joel-commencement.jpg';
+
+const experienceItems = experience.map((role) => ({
+  primary: role.org,
+  secondary: role.title,
+  period: role.period,
+  place: role.place,
+  points: role.points,
+}));
+
+const educationItems = education.map((study) => ({
+  primary: study.org,
+  secondary: study.credential,
+  period: study.period,
+  place: study.place,
+  points: study.notes,
+}));
+
+const description =
+  'Background, research interests, experience, education and publications of Joel Okore — security engineer and researcher in explainable threat detection.';
+---
+
+<BaseLayout title="About" description={description} path="/about">
+  <PageHeader
+    eyebrow="About"
+    title="Between theory and practice"
+    lead="I build security systems that can be reasoned about — where the detection is accurate, the explanation is legible, and the boundary of what has actually been tested is stated rather than implied."
+  />
+
+  <div class="shell">
+    <!-- ===================================================== biography -->
+    <Section index="01" id="biography" title="Biography">
+      <div class="bio">
+        <div class="prose">
+          {bio.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+
+        <figure class="bio__figure">
+          <Image
+            src={portraitSquare}
+            alt="Portrait of Okore Joel Chidike outdoors, wearing a tailored suit."
+            widths={[260, 400, 520]}
+            sizes="(min-width: 62rem) 16rem, (min-width: 40rem) 30vw, 60vw"
+            loading="lazy"
+            quality={80}
+          />
+          <figcaption class="mono">
+            {person.fullName}<br />
+            <span>{person.title}</span>
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="bio__actions">
+        <ActionLink href={url(person.cvPath)} download variant="outline">
+          Download CV
+          <span class="mono bio__hint" aria-hidden="true">PDF · {person.cvUpdated}</span>
+        </ActionLink>
+        <ActionLink href={url('/contact')} variant="quiet">Get in touch →</ActionLink>
+      </div>
+    </Section>
+
+    <!-- ============================================ research interests -->
+    <Section index="02" id="research" title="Research interests">
+      <ul class="interests" role="list">
+        {
+          researchInterests.map((interest, i) => (
+            <li class="interests__item">
+              <span class="interests__index mono" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="interests__name">{interest.name}</h3>
+              <p class="interests__detail">{interest.detail}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </Section>
+
+    <!-- ==================================================== experience -->
+    <Section index="03" id="experience" title="Experience">
+      <Ledger items={experienceItems} />
+    </Section>
+
+    <!-- ===================================================== education -->
+    <Section index="04" id="education" title="Education">
+      <Ledger items={educationItems} />
+
+      <figure class="plate">
+        <Image
+          src={commencement}
+          alt="Okore Joel Chidike on stage in academic dress at the Innopolis University commencement ceremony, holding a graduation folder."
+          widths={[560, 840, 1120]}
+          sizes="(min-width: 62rem) 44rem, 92vw"
+          loading="lazy"
+          quality={78}
+        />
+        <figcaption class="mono">Innopolis University commencement ceremony</figcaption>
+      </figure>
+    </Section>
+
+    <!-- ================================================== publications -->
+    <Section index="05" id="publications" title="Publications">
+      <ol class="pubs" role="list">
+        {
+          publications.map((pub) => (
+            <li class="pubs__item">
+              <p class="pubs__status">
+                <span class="pubs__badge">{pub.status}</span>
+                <span class="mono pubs__year">{pub.year}</span>
+              </p>
+              <h3 class="pubs__title">{pub.title}</h3>
+              <p class="pubs__authors">{pub.authors}</p>
+              <p class="pubs__venue">{pub.venue}</p>
+              <ul class="pubs__points" role="list">
+                {pub.summary.map((point) => (
+                  <li>{point}</li>
+                ))}
+              </ul>
+              {pub.links && pub.links.length > 0 && (
+                <ul class="pubs__links" role="list">
+                  {pub.links.map((link) => (
+                    <li>
+                      <a href={link.href} rel="noopener noreferrer" target="_blank">
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+      <p class="pubs__note">
+        The system built on top of this paper is documented as the
+        <a href={url('/projects/aegis')}>Aegis case study</a>.
+      </p>
+    </Section>
+
+    <!-- ================================================== capabilities -->
+    <Section index="06" id="capabilities" title="Selected technical capabilities">
+      <p class="capabilities__intro">
+        Tools and methods I have used in research or production work. Listed rather than rated — a
+        percentage against a skill name is not information.
+      </p>
+      <div class="capabilities">
+        {
+          capabilities.map((group) => (
+            <div class="capabilities__group">
+              <h3 class="label">{group.name}</h3>
+              <ul role="list">
+                {group.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </Section>
+
+    <!-- ======================================================== awards -->
+    <Section index="07" id="awards" title="Honours, awards and languages">
+      <div class="awards">
+        <ol class="awards__list" role="list">
+          {
+            awards.map((award) => (
+              <li class="awards__item">
+                <p class="mono awards__period">{award.period}</p>
+                <div>
+                  <h3 class="awards__title">{award.title}</h3>
+                  <p class="awards__detail">{award.detail}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+
+        <div class="awards__languages">
+          <h3 class="label">Languages</h3>
+          <ul role="list">
+            {spokenLanguages.map((language) => <li>{language}</li>)}
+          </ul>
+        </div>
+      </div>
+    </Section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* --------------------------------------------------------- biography */
+
+  .bio {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .bio__figure {
+    margin: 0;
+    max-inline-size: 16rem;
+  }
+
+  .bio__figure :global(img) {
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border: var(--hairline) solid var(--c-rule);
+    border-radius: var(--radius-lg);
+    background: var(--c-bg-sunken);
+  }
+
+  .bio__figure figcaption {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-micro);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+    line-height: 1.6;
+  }
+
+  .bio__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-3) var(--s-5);
+    margin-block-start: var(--s-6);
+  }
+
+  .bio__hint {
+    font-size: var(--t-micro);
+    color: var(--c-ink-faint);
+    letter-spacing: 0.06em;
+  }
+
+  @media (min-width: 62rem) {
+    .bio {
+      grid-template-columns: minmax(0, 1fr) 16rem;
+      gap: var(--s-9);
+      align-items: start;
+    }
+  }
+
+  /* --------------------------------------------------------- interests */
+
+  .interests {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .interests__item {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: var(--s-1) var(--s-4);
+    padding-block: var(--s-4);
+    border-block-start: var(--hairline) solid var(--c-rule);
+  }
+
+  .interests__item:first-child {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  .interests__index {
+    grid-row: 1 / span 2;
+    font-size: var(--t-micro);
+    color: var(--c-accent);
+    letter-spacing: 0.08em;
+    padding-block-start: 0.35rem;
+  }
+
+  .interests__name {
+    font-size: var(--t-h4);
+    font-weight: 550;
+  }
+
+  .interests__detail {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--c-ink-muted);
+    max-inline-size: 62ch;
+  }
+
+  @media (min-width: 62rem) {
+    .interests {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--s-8);
+    }
+
+    .interests__item:nth-child(2) {
+      border-block-start: 0;
+      padding-block-start: 0;
+    }
+  }
+
+  /* ------------------------------------------------------------- plate */
+
+  .plate {
+    margin: var(--s-7) 0 0;
+    max-inline-size: 44rem;
+  }
+
+  .plate :global(img) {
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 8 / 5;
+    object-fit: cover;
+    border: var(--hairline) solid var(--c-rule);
+    border-radius: var(--radius-lg);
+    background: var(--c-bg-sunken);
+  }
+
+  .plate figcaption {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-micro);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--c-ink-faint);
+  }
+
+  /* -------------------------------------------------------- publications */
+
+  .pubs {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-5);
+  }
+
+  .pubs__item {
+    padding: var(--s-5);
+    border: var(--hairline) solid var(--c-rule);
+    border-radius: var(--radius-lg);
+    background: var(--c-surface);
+  }
+
+  .pubs__status {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+  }
+
+  .pubs__badge {
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-accent);
+    padding: 0.16rem 0.45rem;
+    border: var(--hairline) solid var(--c-accent-line);
+    border-radius: var(--radius);
+    background: var(--c-accent-wash);
+  }
+
+  .pubs__year {
+    font-size: var(--t-micro);
+    color: var(--c-ink-faint);
+    letter-spacing: 0.06em;
+  }
+
+  .pubs__title {
+    margin-block-start: var(--s-4);
+    font-size: var(--t-h3);
+    font-weight: 550;
+    max-inline-size: 34ch;
+  }
+
+  .pubs__authors {
+    margin-block-start: var(--s-3);
+    font-size: 0.9375rem;
+    color: var(--c-ink);
+  }
+
+  .pubs__venue {
+    margin-block-start: 0.2rem;
+    font-size: 0.9375rem;
+    font-style: italic;
+    font-family: var(--font-serif);
+    color: var(--c-ink-muted);
+    max-inline-size: 60ch;
+  }
+
+  .pubs__points {
+    margin: var(--s-4) 0 0;
+    padding: var(--s-4) 0 0;
+    border-block-start: var(--hairline) solid var(--c-rule);
+    display: grid;
+    gap: var(--s-3);
+  }
+
+  .pubs__points li {
+    position: relative;
+    padding-inline-start: 1.15rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--c-ink-muted);
+    max-inline-size: 66ch;
+  }
+
+  .pubs__points li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0.7em;
+    inline-size: 0.45rem;
+    block-size: var(--hairline);
+    background: var(--c-rule-strong);
+  }
+
+  .pubs__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-4);
+    margin: var(--s-4) 0 0;
+    padding: 0;
+    font-size: 0.875rem;
+  }
+
+  .pubs__note {
+    margin-block-start: var(--s-5);
+    font-size: 0.9375rem;
+    color: var(--c-ink-muted);
+  }
+
+  /* ------------------------------------------------------- capabilities */
+
+  .capabilities__intro {
+    max-inline-size: 56ch;
+    margin-block-end: var(--s-6);
+    font-size: 0.9375rem;
+    color: var(--c-ink-muted);
+  }
+
+  .capabilities {
+    display: grid;
+    gap: var(--s-5);
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  }
+
+  .capabilities__group {
+    padding-block-start: var(--s-4);
+    border-block-start: 2px solid var(--c-rule-strong);
+  }
+
+  .capabilities__group ul {
+    margin: var(--s-3) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .capabilities__group li {
+    font-size: 0.9375rem;
+    color: var(--c-ink-muted);
+  }
+
+  /* ------------------------------------------------------------ awards */
+
+  .awards {
+    display: grid;
+    gap: var(--s-7);
+  }
+
+  .awards__list {
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .awards__item {
+    display: grid;
+    gap: var(--s-1) var(--s-5);
+    padding-block: var(--s-4);
+    border-block-start: var(--hairline) solid var(--c-rule);
+  }
+
+  .awards__item:first-child {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+
+  .awards__period {
+    font-size: var(--t-tiny);
+    color: var(--c-ink-faint);
+    letter-spacing: 0.04em;
+  }
+
+  .awards__title {
+    font-size: var(--t-h4);
+    font-weight: 550;
+  }
+
+  .awards__detail {
+    margin-block-start: 0.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--c-ink-muted);
+    max-inline-size: 62ch;
+  }
+
+  .awards__languages ul {
+    margin: var(--s-3) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .awards__languages li {
+    font-size: 0.9375rem;
+    color: var(--c-ink-muted);
+  }
+
+  @media (min-width: 48rem) {
+    .awards__item {
+      grid-template-columns: 8rem 1fr;
+    }
+
+    .awards__period {
+      padding-block-start: 0.3rem;
+    }
+  }
+
+  @media (min-width: 62rem) {
+    .awards {
+      grid-template-columns: minmax(0, 1fr) 14rem;
+      gap: var(--s-9);
+    }
+  }
+</style>
