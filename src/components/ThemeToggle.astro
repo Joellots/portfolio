@@ -62,26 +62,14 @@
   :global(:root[data-theme='dark']) .icon--moon {
     display: none;
   }
-
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .icon--sun {
-      display: block;
-    }
-    :global(:root:not([data-theme='light'])) .icon--moon {
-      display: none;
-    }
-  }
 </style>
 
 <script>
   const root = document.documentElement;
-  const media = window.matchMedia('(prefers-color-scheme: dark)');
 
-  const resolved = (): 'light' | 'dark' => {
-    const stamped = root.dataset.theme;
-    if (stamped === 'light' || stamped === 'dark') return stamped;
-    return media.matches ? 'dark' : 'light';
-  };
+  // Light is the default, so an unstamped document is light regardless of the
+  // operating system setting.
+  const resolved = (): 'light' | 'dark' => (root.dataset.theme === 'dark' ? 'dark' : 'light');
 
   const sync = () => {
     const next = resolved() === 'dark' ? 'light' : 'dark';
@@ -106,6 +94,5 @@
     });
   }
 
-  media.addEventListener('change', sync);
   sync();
 </script>

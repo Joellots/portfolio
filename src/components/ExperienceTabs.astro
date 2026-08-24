@@ -87,6 +87,19 @@ const isOngoing = (period: string) => /present|expected/i.test(period);
     }
   </div>
 
+  <noscript>
+    <style is:inline>
+      /* Without the switch, both panels are simply shown in sequence. */
+      .tabs__panel[data-inactive] {
+        display: block !important;
+        margin-block-start: 2.75rem;
+      }
+      .tabs__list {
+        display: none;
+      }
+    </style>
+  </noscript>
+
   {
     panels.map((panel, i) => (
       <div
@@ -155,14 +168,14 @@ const isOngoing = (period: string) => /present|expected/i.test(period);
     block-size: 1.125rem;
   }
 
+  /*
+   * Hidden from first paint rather than after hydration: revealing or hiding a
+   * panel once the script runs reflows everything below it, which on a real
+   * connection is a large layout shift. <noscript> above restores the
+   * both-panels fallback.
+   */
   .tabs__panel[data-inactive] {
     display: none;
-  }
-
-  /* Without JS both panels show; the tab strip is then decorative. */
-  .tabs:not([data-ready]) .tabs__panel[data-inactive] {
-    display: block;
-    margin-block-start: var(--s-7);
   }
 
   /* -------------------------------------------------------------- spine */
@@ -281,9 +294,6 @@ const isOngoing = (period: string) => /present|expected/i.test(period);
       document.getElementById(tab.getAttribute('aria-controls') ?? '')
     );
     if (tabs.length === 0) continue;
-
-    // Only hide inactive panels once the switch is actually wired up.
-    root.setAttribute('data-ready', '');
 
     const select = (index: number, focus = true) => {
       tabs.forEach((tab, i) => {

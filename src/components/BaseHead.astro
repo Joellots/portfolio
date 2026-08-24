@@ -1,9 +1,9 @@
 ---
 import { person } from '../data/site';
 import { url, absoluteUrl } from '../lib/url';
-import sansFont from '../assets/fonts/ibm-plex-sans-latin-wght-normal.woff2?url';
-import monoFont from '../assets/fonts/ibm-plex-mono-latin-400-normal.woff2?url';
-import serifFont from '../assets/fonts/source-serif-4-latin-wght-normal.woff2?url';
+import sansFont from '../assets/fonts/geist-latin-wght-normal.woff2?url';
+import monoFont from '../assets/fonts/geist-mono-latin-wght-normal.woff2?url';
+import serifFont from '../assets/fonts/newsreader-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 
 interface Props {
@@ -37,8 +37,7 @@ const fullTitle = title;
 <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
 <link rel="alternate icon" href={url('/favicon.ico')} sizes="32x32" />
 <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
-<meta name="theme-color" content="#fcfbfa" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#1b1c1f" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#fcfbfa" />
 
 <!-- Critical faces: every above-the-fold string uses one of these three. -->
 <link rel="preload" as="font" type="font/woff2" href={sansFont} crossorigin="anonymous" />

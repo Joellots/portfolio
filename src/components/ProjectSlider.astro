@@ -65,7 +65,16 @@ const { projects } = Astro.props;
     </div>
   </div>
 
-  <div class="slider__controls" data-slider-controls hidden>
+  <noscript>
+    <style is:inline>
+      /* The controls do nothing without the script; the track still swipes. */
+      .slider__controls {
+        display: none !important;
+      }
+    </style>
+  </noscript>
+
+  <div class="slider__controls" data-slider-controls>
     <button type="button" class="arrow" data-slider-prev aria-label="Previous project">
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
         <path
@@ -172,8 +181,8 @@ const { projects } = Astro.props;
 
   .slide__meta {
     margin-block-start: var(--s-3);
-    font-size: var(--t-small);
-    line-height: 1.65;
+    font-size: var(--t-base);
+    line-height: 1.7;
     color: var(--c-ink-muted);
   }
 
@@ -199,10 +208,6 @@ const { projects } = Astro.props;
     align-items: center;
     gap: var(--s-3);
     margin-block-start: var(--s-6);
-  }
-
-  .slider__controls[hidden] {
-    display: none;
   }
 
   .arrow {
@@ -290,9 +295,6 @@ const { projects } = Astro.props;
     const prev = root.querySelector<HTMLButtonElement>('[data-slider-prev]');
     const next = root.querySelector<HTMLButtonElement>('[data-slider-next]');
     if (!viewport || !controls || slides.length < 2) continue;
-
-    // Controls are inert markup until the script attaches them.
-    controls.hidden = false;
 
     let index = 0;
 

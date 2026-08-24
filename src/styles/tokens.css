@@ -28,10 +28,10 @@
 
   /* -- type -------------------------------------------------------------- */
   --font-sans:
-    'Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
     sans-serif;
-  --font-serif: 'Source Serif', ui-serif, Georgia, 'Times New Roman', serif;
-  --font-mono: 'Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-serif: 'Newsreader', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Fluid scale, 360px → 1440px viewport. */
   --t-micro: 0.75rem;
@@ -78,39 +78,23 @@
   --dur: 220ms;
 }
 
-/* System preference (no explicit choice stamped on <html>). */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-
-    --c-bg: #1b1c1f; /* soft neutral grey, not black */
-    --c-raised: #232427;
-    --c-ink: #e8e7e4; /* 13.8:1 (AAA) */
-    --c-ink-muted: #a8a9ac; /*  7.3:1 (AAA) */
-    --c-ink-faint: #8a8b8f; /*  5.0:1 (AA)  */
-    --c-rule: #2e3033;
-    --c-rule-strong: #43464b;
-
-    --c-accent: #f0876a; /*  6.8:1 (AA)  */
-    --c-accent-ink: #1a1b1d;
-
-    --c-selection: #4b2c22;
-  }
-}
-
-/* Explicit choice always wins, in both directions. */
+/*
+ * Light is the default whatever the operating system prefers, so dark applies
+ * only when the visitor picks it. Their choice persists in localStorage and is
+ * stamped on <html> before first paint.
+ */
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --c-bg: #1b1c1f;
+  --c-bg: #1b1c1f; /* soft neutral grey, not black */
   --c-raised: #232427;
-  --c-ink: #e8e7e4;
-  --c-ink-muted: #a8a9ac;
-  --c-ink-faint: #8a8b8f;
+  --c-ink: #e8e7e4; /* 13.8:1 (AAA) */
+  --c-ink-muted: #a8a9ac; /*  7.3:1 (AAA) */
+  --c-ink-faint: #8a8b8f; /*  5.0:1 (AA)  */
   --c-rule: #2e3033;
   --c-rule-strong: #43464b;
 
-  --c-accent: #f0876a;
+  --c-accent: #f0876a; /*  6.8:1 (AA)  */
   --c-accent-ink: #1a1b1d;
 
   --c-selection: #4b2c22;

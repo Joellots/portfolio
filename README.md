@@ -174,16 +174,18 @@ GitHub Actions**. Then re-run the workflow from the Actions tab.
 ## Design notes
 
 **Tokens.** Colour, type, spacing and motion live as custom properties in
-[`src/styles/tokens.css`](src/styles/tokens.css). Light is the base palette on
-`:root`. Dark is defined twice, once under `prefers-color-scheme` and once
-under `[data-theme='dark']`, so the system default and the manual toggle both
-resolve. Dark is a soft neutral grey (`#1b1c1f`) rather than near-black. Every
-text colour is annotated with its measured contrast ratio; all pass WCAG AA.
+[`src/styles/tokens.css`](src/styles/tokens.css). **Light is the default**
+whatever the operating system prefers; dark applies only under
+`[data-theme='dark']`, which the toggle stamps on `<html>` and persists in
+`localStorage`. Dark is a soft neutral grey (`#1b1c1f`) rather than
+near-black. Every text colour is annotated with its measured contrast ratio;
+all pass WCAG AA.
 
-**Type.** IBM Plex Sans for interface, Source Serif 4 for reading, IBM Plex
-Mono for dates and small labels. Latin subsets are self-hosted in
-`src/assets/fonts/`, vendored from the Fontsource packages in
-`devDependencies`. The three faces used above the fold are preloaded.
+**Type.** Geist for interface and headings, Newsreader for long-form reading,
+Geist Mono for dates and small labels. Geist and Geist Mono are a designed
+pair. All three are variable, so one file covers every weight. Latin subsets
+are self-hosted in `src/assets/fonts/`, vendored from the Fontsource packages
+in `devDependencies`, and all three are preloaded.
 
 **Links.** Internal hrefs go through `url()` in
 [`src/lib/url.ts`](src/lib/url.ts), which applies the base path and normalises
@@ -191,6 +193,12 @@ trailing slashes so they match the sitemap.
 
 **Motion.** Only two transitions exist: link colour and the accordion chevron.
 `prefers-reduced-motion: reduce` disables both, along with smooth scrolling.
+
+**No post-hydration reflow.** The tab panels and the slider controls are
+painted in their final state, and `<noscript>` restores the no-JS fallback.
+Doing it the other way round — rendering both tab panels, then hiding one once
+the script runs — cost 0.24 CLS on the live site while measuring 0 locally,
+where the script runs before first paint.
 
 **Accuracy.** Figures on the page trace to the thesis or the published paper.
 Where a project has no recorded metrics, it says so instead of estimating.
