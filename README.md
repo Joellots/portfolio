@@ -13,11 +13,8 @@ little under 1 kB of JavaScript (theme toggle plus nav highlighting).
 
 ```bash
 npm install
-npm run dev          # http://localhost:4321/portfolio/
+npm run dev          # http://localhost:4321/
 ```
-
-The `/portfolio/` path is the GitHub Pages project-site base path. See
-[Deployment](#deployment) to change it.
 
 ## Scripts
 
@@ -115,32 +112,53 @@ Builds are never affected.
 
 ## Deployment
 
+Live at **https://joelokore.tech**, from `Joellots/portfolio`.
+
 [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs on every
-push to `main` and can be triggered from the Actions tab.
+push to `main` and can be triggered from the Actions tab. It formats,
+type-checks, builds, audits the output and publishes `dist/`.
 
-1. Push to a GitHub repository.
-2. **Settings → Pages → Build and deployment → Source: GitHub Actions.**
-3. Push to `main`.
+The site URL is fixed to the custom domain in the workflow rather than read
+from `actions/configure-pages`. Reading it would produce
+`joellots.github.io/portfolio` on any run made before the domain is attached,
+baking a wrong base path into every asset URL.
 
-The workflow passes the origin and base path from `actions/configure-pages`
-into the build, so a project site, a user site and a custom domain all work
-without editing code. Local builds fall back to the defaults at the top of
-[`astro.config.mjs`](astro.config.mjs).
+`public/CNAME` holds the domain and is copied to the site root at build time.
+GitHub Pages reads it from each deployment, so the custom domain survives
+redeploys. Do not remove it.
 
-| Target                                | `SITE_URL`                   | `BASE_PATH`  |
-| ------------------------------------- | ---------------------------- | ------------ |
-| Project site (default)                | `https://joellots.github.io` | `/portfolio` |
-| User site (repo `Joellots.github.io`) | `https://joellots.github.io` | _(empty)_    |
-| Custom domain                         | `https://your-domain`        | _(empty)_    |
+### DNS
 
-Test any of them locally:
+Apex domain, four `A` records and four `AAAA` records:
 
-```bash
-SITE_URL="https://example.com" BASE_PATH="" npm run build
+```
+A     @   185.199.108.153
+A     @   185.199.109.153
+A     @   185.199.110.153
+A     @   185.199.111.153
+AAAA  @   2606:50c0:8000::153
+AAAA  @   2606:50c0:8001::153
+AAAA  @   2606:50c0:8002::153
+AAAA  @   2606:50c0:8003::153
 ```
 
-For a custom domain, add `public/CNAME` containing the bare domain, point DNS
-at GitHub Pages, then set it under Settings → Pages and enable _Enforce HTTPS_.
+Optionally `CNAME  www  joellots.github.io` so `www` redirects too. Once the
+DNS check passes in Settings → Pages, tick **Enforce HTTPS**.
+
+### Serving from somewhere else
+
+Both values are environment variables, so no code change is needed:
+
+```bash
+SITE_URL="https://joellots.github.io" BASE_PATH="/portfolio" npm run build
+```
+
+### Troubleshooting
+
+**`Get Pages site failed … Not Found`** — Pages is not enabled on the
+repository. The workflow passes `enablement: true` to `configure-pages`, which
+turns it on; if it still fails, set Settings → Pages → Source to
+**GitHub Actions** by hand and re-run.
 
 ## Design notes
 

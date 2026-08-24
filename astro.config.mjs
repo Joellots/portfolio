@@ -5,26 +5,18 @@ import sitemap from '@astrojs/sitemap';
 /* ---------------------------------------------------------------------------
  * DEPLOYMENT TARGET
  *
- * Change these two values (or set the matching environment variables in CI) to
- * point the build at wherever the site is hosted. Everything else — canonical
- * URLs, Open Graph tags, the sitemap and every internal link — derives from
- * them, so there is nothing else to hunt down.
+ * The site is served from the custom domain in public/CNAME, so it lives at a
+ * domain root and needs no base path. Both values can be overridden by
+ * environment variables if the site is ever served from somewhere else:
  *
- *  A. GitHub Pages *project* site   (repo "portfolio" under github.com/Joellots)
- *       SITE = 'https://joellots.github.io'   BASE = '/portfolio'      <-- default
- *
- *  B. GitHub Pages *user* site      (repo named "Joellots.github.io")
- *       SITE = 'https://joellots.github.io'   BASE = '/'
- *
- *  C. Custom domain                 (e.g. joelokore.dev, via public/CNAME)
- *       SITE = 'https://joelokore.dev'        BASE = '/'
+ *   SITE_URL="https://joellots.github.io" BASE_PATH="/portfolio" npm run build
  * ------------------------------------------------------------------------- */
-const SITE = process.env.SITE_URL || 'https://joellots.github.io';
+const SITE = process.env.SITE_URL || 'https://joelokore.tech';
 
-// `actions/configure-pages` emits an EMPTY base_path for user sites and custom
-// domains, so an unset variable and an empty one mean different things here.
+// An unset variable and an empty one mean different things: empty is a valid
+// base path (a domain root), so it must not fall through to the default.
 const envBase = process.env.BASE_PATH;
-const BASE = envBase === undefined ? '/portfolio' : envBase || '/';
+const BASE = envBase === undefined ? '/' : envBase || '/';
 
 export default defineConfig({
   site: SITE,

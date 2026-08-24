@@ -11,7 +11,8 @@ import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, resolve, extname } from 'node:path';
 
 const DIST = resolve(process.argv[2] ?? 'dist');
-const BASE = (process.env.BASE_PATH ?? '/portfolio').replace(/\/+$/, '');
+// Default matches astro.config.mjs: a domain root, i.e. no base path.
+const BASE = (process.env.BASE_PATH ?? '').replace(/\/+$/, '');
 
 const failures = [];
 const warnings = [];
