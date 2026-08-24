@@ -68,13 +68,12 @@ export const greeting = 'Hi, I’m Joel';
  * CV. Shown under the greeting in place of a paragraph.
  */
 export const keywords: readonly string[] = [
-  'Machine learning',
-  'Explainable AI',
+  'Cybersecurity',
+  'AI/ML',
   'Network security',
   'Anomaly detection',
-  'Graph theory',
+  'Graph-based methods',
   'Security automation',
-  'DevSecOps',
 ];
 
 /** Supplied short biography. Used verbatim. */

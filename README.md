@@ -73,7 +73,10 @@ Other files:
 
 - **CV PDF** — `public/cv/Okore-Joel-Chidike-CV.pdf` (keep the filename, or
   update `person.cvPath`)
-- **Portrait** — `src/assets/images/joel-portrait.jpg`, 4:5. Alt text is set in
+- **Portraits** — `src/assets/images/joel-portrait.jpg` (4:5, hero) and
+  `joel-portrait-about.jpg` (1:1, About). Both are masked into an organic shape
+  by `src/components/Portrait.astro`, which also draws the offset accent shape
+  behind them; pass `variant="a"` or `"b"` to pick a shape. Alt text is set in
   `src/pages/index.astro`.
 - **Social card** — `public/og/joel-okore-og.jpg`; regenerate with
   `./scripts/generate-og.sh` (needs ImageMagick and `fonttools`)

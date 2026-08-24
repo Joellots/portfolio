@@ -1,0 +1,87 @@
+---
+import { Image } from 'astro:assets';
+
+/**
+ * Photograph masked into an organic shape, sitting on a tinted shape of the
+ * same family offset behind it. Two variants so the two portraits on the page
+ * do not read as copies of each other.
+ */
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  variant?: 'a' | 'b';
+  ratio?: string;
+  widths: number[];
+  sizes: string;
+  eager?: boolean;
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  variant = 'a',
+  ratio = '4 / 5',
+  widths,
+  sizes,
+  eager = false,
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={['portrait', `portrait--${variant}`, className]}>
+  <Image
+    src={src}
+    alt={alt}
+    widths={widths}
+    sizes={sizes}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : undefined}
+    decoding={eager ? 'sync' : 'async'}
+    quality={84}
+    style={`aspect-ratio: ${ratio}`}
+  />
+</div>
+
+<style>
+  .portrait {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /*
+   * A shape of the same family offset behind the photograph, so colour shows
+   * on two sides rather than as a ring. Reads as design rather than a border.
+   */
+  .portrait::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: color-mix(in srgb, var(--c-accent) 60%, var(--c-bg));
+    transform: translate(0.85rem, 0.85rem);
+  }
+
+  .portrait :global(img) {
+    inline-size: 100%;
+    block-size: auto;
+    object-fit: cover;
+    background: var(--c-raised);
+  }
+
+  /* -- variant A --------------------------------------------------------- */
+  .portrait--a :global(img),
+  .portrait--a::before {
+    border-radius: 61% 39% 47% 53% / 38% 54% 46% 62%;
+  }
+
+  /* -- variant B: the same family, mirrored ------------------------------ */
+  .portrait--b :global(img),
+  .portrait--b::before {
+    border-radius: 34% 66% 48% 52% / 59% 33% 67% 41%;
+  }
+
+  .portrait--b::before {
+    transform: translate(-0.85rem, 0.85rem);
+  }
+</style>

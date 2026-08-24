@@ -1,9 +1,9 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Accordion from '../components/Accordion.astro';
 import IconLink from '../components/IconLink.astro';
+import Portrait from '../components/Portrait.astro';
 import ExperienceTabs from '../components/ExperienceTabs.astro';
 import ProjectSlider from '../components/ProjectSlider.astro';
 import {
@@ -20,6 +20,7 @@ import {
 } from '../data/site';
 import { url, absoluteUrl } from '../lib/url';
 import portrait from '../assets/images/joel-portrait.jpg';
+import portraitAbout from '../assets/images/joel-portrait-about.jpg';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const slides = await Promise.all(
@@ -77,18 +78,16 @@ const jsonLd = {
         </div>
       </div>
 
-      <div class="hero__portrait">
-        <Image
-          src={portrait}
-          alt={`Portrait photograph of ${person.fullName}.`}
-          widths={[320, 460, 640, 880]}
-          sizes="(min-width: 56rem) 20rem, (min-width: 34rem) 40vw, 68vw"
-          loading="eager"
-          fetchpriority="high"
-          decoding="sync"
-          quality={84}
-        />
-      </div>
+      <Portrait
+        class="hero__portrait"
+        src={portrait}
+        alt={`Portrait photograph of ${person.fullName}.`}
+        variant="a"
+        ratio="4 / 5"
+        widths={[320, 460, 640, 880]}
+        sizes="(min-width: 56rem) 19rem, (min-width: 34rem) 38vw, 62vw"
+        eager
+      />
     </div>
   </section>
 
@@ -96,10 +95,19 @@ const jsonLd = {
     <!-- ========================================================== about -->
     <section id="about" class="section" aria-labelledby="about-title">
       <h2 id="about-title" class="section__title">About</h2>
-      <div class="section__body">
+      <div class="section__body about">
         <div class="prose">
           {about.map((paragraph) => <p>{paragraph}</p>)}
         </div>
+        <Portrait
+          class="about__portrait"
+          src={portraitAbout}
+          alt={`${person.fullName}, photographed outdoors.`}
+          variant="b"
+          ratio="1 / 1"
+          widths={[280, 420, 560]}
+          sizes="(min-width: 62rem) 15rem, (min-width: 40rem) 30vw, 62vw"
+        />
       </div>
     </section>
 
@@ -258,19 +266,8 @@ const jsonLd = {
   }
 
   .hero__portrait {
-    max-inline-size: 17rem;
-    padding: 0.5rem;
-    background: var(--c-raised);
-    border-radius: 5px;
-  }
-
-  .hero__portrait :global(img) {
-    inline-size: 100%;
-    block-size: auto;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: var(--radius);
-    background: var(--c-raised);
+    max-inline-size: 15rem;
+    margin-inline: auto;
   }
 
   @media (min-width: 34rem) {
@@ -280,8 +277,9 @@ const jsonLd = {
     }
 
     .hero__portrait {
-      inline-size: clamp(11rem, 26vw, 17rem);
+      inline-size: clamp(10.5rem, 25vw, 16rem);
       max-inline-size: none;
+      margin-inline: 0;
     }
   }
 
@@ -316,6 +314,31 @@ const jsonLd = {
 
     .section__body {
       margin-block-start: 0;
+    }
+  }
+
+  /* ---------------------------------------------------------- about */
+
+  .about {
+    display: grid;
+    gap: var(--s-7);
+  }
+
+  .about__portrait {
+    max-inline-size: 15rem;
+  }
+
+  @media (min-width: 40rem) {
+    .about {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--s-8);
+      align-items: start;
+    }
+
+    .about__portrait {
+      inline-size: clamp(9rem, 22vw, 15rem);
+      max-inline-size: none;
+      margin-block-start: 0.5rem;
     }
   }
 
