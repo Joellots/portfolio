@@ -1,0 +1,107 @@
+---
+/**
+ * Disclosure built on native <details>/<summary>: keyboard operable and
+ * announced correctly by screen readers with no JavaScript.
+ */
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<details class="disc">
+  <summary class="disc__summary">
+    <svg class="disc__chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+      <path
+        d="m5.5 3.5 5 4.5-5 4.5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+    <span>{label}</span>
+  </summary>
+  <div class="disc__panel">
+    <slot />
+  </div>
+</details>
+
+<style>
+  .disc {
+    margin-block-start: var(--s-4);
+  }
+
+  .disc__summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding-block: var(--s-1);
+    font-size: var(--t-small);
+    color: var(--c-ink-muted);
+    cursor: pointer;
+    list-style: none;
+    inline-size: fit-content;
+  }
+
+  .disc__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .disc__summary:hover {
+    color: var(--c-accent);
+  }
+
+  .disc__summary:focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 4px;
+    border-radius: 2px;
+  }
+
+  .disc__chevron {
+    inline-size: 0.875rem;
+    block-size: 0.875rem;
+    flex: none;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .disc[open] .disc__chevron {
+    transform: rotate(90deg);
+  }
+
+  .disc__panel {
+    padding-block-start: var(--s-4);
+    max-inline-size: var(--w-text);
+  }
+
+  .disc__panel :global(p) {
+    font-family: var(--font-serif);
+    font-size: var(--t-body);
+    line-height: var(--lh-prose);
+    color: var(--c-ink-muted);
+  }
+
+  .disc__panel :global(p + p) {
+    margin-block-start: 0.9em;
+  }
+
+  .disc__panel :global(strong) {
+    color: var(--c-ink);
+    font-weight: 600;
+  }
+
+  .disc__panel :global(ul) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--s-3);
+  }
+
+  .disc__panel :global(li) {
+    font-family: var(--font-serif);
+    font-size: var(--t-body);
+    line-height: var(--lh-prose);
+    color: var(--c-ink-muted);
+  }
+</style>

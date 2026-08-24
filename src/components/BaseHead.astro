@@ -21,7 +21,7 @@ const { title, description, path, ogType = 'website', jsonLd } = Astro.props;
 
 const canonical = absoluteUrl(path, Astro.site);
 const ogImage = absoluteUrl('/og/joel-okore-og.jpg', Astro.site);
-const fullTitle = path === '/' ? title : `${title} — ${person.siteName}`;
+const fullTitle = title;
 ---
 
 <meta charset="utf-8" />
@@ -37,8 +37,8 @@ const fullTitle = path === '/' ? title : `${title} — ${person.siteName}`;
 <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
 <link rel="alternate icon" href={url('/favicon.ico')} sizes="32x32" />
 <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
-<meta name="theme-color" content="#faf9f7" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#0b0c0e" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#fcfbfa" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1b1c1f" media="(prefers-color-scheme: dark)" />
 
 <!-- Critical faces: every above-the-fold string uses one of these three. -->
 <link rel="preload" as="font" type="font/woff2" href={sansFont} crossorigin="anonymous" />
@@ -47,7 +47,7 @@ const fullTitle = path === '/' ? title : `${title} — ${person.siteName}`;
 
 <!-- Open Graph -->
 <meta property="og:type" content={ogType} />
-<meta property="og:site_name" content={`${person.siteName} — ${person.title}`} />
+<meta property="og:site_name" content={person.fullName} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
@@ -55,7 +55,10 @@ const fullTitle = path === '/' ? title : `${title} — ${person.siteName}`;
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:type" content="image/jpeg" />
-<meta property="og:image:alt" content={`${person.fullName} — ${person.title}`} />
+<meta
+  property="og:image:alt"
+  content={`${person.fullName}, ${person.title}, beside a portrait photograph.`}
+/>
 <meta property="og:locale" content="en_GB" />
 
 <!-- Twitter / X -->

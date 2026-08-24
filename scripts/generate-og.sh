@@ -27,29 +27,25 @@ for weight in (400, 500):
     instancer.instantiateVariableFont(font, {'wght': weight}).save(f'{out}/sans-{weight}.ttf')
 PY
 
-BG='#0B0C0E'
-INK='#E9E9E6'
-MUTED='#9BA1A9'
-ACCENT='#FF7A5C'
-RULE='#24272C'
+BG='#1B1C1F'
+INK='#E8E7E4'
+MUTED='#A8A9AC'
+ACCENT='#F0876A'
+RULE='#2E3033'
 
 # Portrait panel: 420x630 crop of the hero portrait, dimmed toward the seam.
 convert src/assets/images/joel-portrait.jpg \
-  -resize 420x630^ -gravity north -extent 420x630 \
-  -modulate 96,92,100 "$TMP/portrait.png"
-
-# Soft seam so the photo edge does not read as a hard paste.
-convert -size 630x230 gradient:"$BG"-none -rotate 90 "$TMP/seam.png"
+  -resize x630 -gravity center -extent 420x630 \
+  "$TMP/portrait.png"
 
 convert -size 1200x630 "xc:$BG" \
   \( "$TMP/portrait.png" \) -gravity east -composite \
-  \( "$TMP/seam.png" \) -gravity northwest -geometry +780+0 -composite \
   -gravity northwest \
   -fill "$RULE" -draw "rectangle 779,0 780,630" \
   -fill "$ACCENT" -draw "rectangle 0,0 1200,5" \
   \
   -font "$TMP/mono-500.ttf" -pointsize 22 -fill "$ACCENT" \
-  -annotate +80+150 'SECURITY ENGINEER AND RESEARCHER' \
+  -annotate +80+150 'SECURITY ENGINEER & RESEARCHER' \
   \
   -font "$TMP/sans-500.ttf" -pointsize 76 -fill "$INK" \
   -annotate +78+228 'Okore Joel Chidike' \
@@ -57,13 +53,9 @@ convert -size 1200x630 "xc:$BG" \
   -fill "$RULE" -draw "rectangle 80,348 700,349" \
   \
   -font "$TMP/sans-400.ttf" -pointsize 30 -fill "$MUTED" \
-  -annotate +80+392 'Encrypted-traffic analysis, explainable' \
-  -annotate +80+434 'detection, and graph-based methods' \
-  -annotate +80+476 'for security.' \
-  \
-  -font "$TMP/mono-500.ttf" -pointsize 19 -fill "#757B83" \
-  -annotate +80+540 'MSc SECURITY & NETWORK ENGINEERING' \
-  -annotate +80+570 'MSc ADVANCED COMBINATORICS (IN PROGRESS)' \
+  -annotate +80+392 'Security systems that use machine' \
+  -annotate +80+434 'learning, and the work of making' \
+  -annotate +80+476 'their decisions checkable.' \
   \
   -strip -interlace Plane -sampling-factor 4:2:0 -quality 86 public/og/joel-okore-og.jpg
 

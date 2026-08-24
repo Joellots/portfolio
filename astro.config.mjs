@@ -1,8 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import { unified } from '@astrojs/markdown-remark';
-import { rehypeBaseUrl, rehypeStripComments } from './src/lib/rehype-base-url.mjs';
 
 /* ---------------------------------------------------------------------------
  * DEPLOYMENT TARGET
@@ -44,16 +42,6 @@ export default defineConfig({
       filter: (page) => !page.includes('/404'),
     }),
   ],
-  markdown: {
-    // The unified processor is selected explicitly because the two rehype
-    // plugins below need it: Astro 7 defaults to Sätteri, which does not run
-    // unified plugins.
-    processor: unified(),
-    // Markdown bodies are authored with root-relative links; the first plugin
-    // keeps them working when the site is served from a sub-path. The second
-    // keeps authoring TODOs out of the shipped HTML.
-    rehypePlugins: [[rehypeBaseUrl, { base: BASE }], rehypeStripComments],
-  },
   image: {
     // Local files only: no remote image domains are permitted.
     domains: [],

@@ -1,14 +1,8 @@
 # joel-okore-portfolio
 
-Personal site for **Okore Joel Chidike** — Security Engineer and Researcher.
-Static, no tracking, no client-side framework: Astro + TypeScript, hand-written
-CSS on design tokens, and roughly 600 bytes of JavaScript (the theme toggle).
-
-- **Pages** — home, projects index, four case studies, about, contact, 404
-- **Content** — case studies are Markdown in an Astro content collection
-- **Deploys** — GitHub Actions → GitHub Pages
-
----
+Personal site for Okore Joel Chidike. One responsive scrolling page, built with
+Astro and TypeScript. Hand-written CSS on design tokens, no UI framework, and a
+little under 1 kB of JavaScript (theme toggle plus nav highlighting).
 
 ## Requirements
 
@@ -22,212 +16,142 @@ npm install
 npm run dev          # http://localhost:4321/portfolio/
 ```
 
-Note the `/portfolio/` path — the site is configured for a GitHub Pages
-_project_ site by default (see [Deployment](#deployment)).
+The `/portfolio/` path is the GitHub Pages project-site base path. See
+[Deployment](#deployment) to change it.
 
 ## Scripts
 
-| Command                | What it does                                                                                      |
-| ---------------------- | ------------------------------------------------------------------------------------------------- |
-| `npm run dev`          | Dev server with hot reload                                                                        |
-| `npm run build`        | Production build into `dist/`                                                                     |
-| `npm run preview`      | Serve the built `dist/` locally                                                                   |
-| `npm run check`        | `astro check` — TypeScript and template diagnostics                                               |
-| `npm run format`       | Prettier, write                                                                                   |
-| `npm run format:check` | Prettier, verify only (what CI runs)                                                              |
-| `npm run audit:output` | Audit `dist/` — broken links, image alt/dimensions, SEO metadata, heading order, placeholder text |
-| `npm run verify`       | format:check → check → build → audit:output                                                       |
+| Command                | What it does                                                                                                      |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`          | Dev server with hot reload                                                                                        |
+| `npm run build`        | Production build into `dist/`                                                                                     |
+| `npm run preview`      | Serve the built `dist/` locally                                                                                   |
+| `npm run check`        | `astro check` — TypeScript and template diagnostics                                                               |
+| `npm run format`       | Prettier, write                                                                                                   |
+| `npm run format:check` | Prettier, verify only (what CI runs)                                                                              |
+| `npm run audit:output` | Audit `dist/` for broken links, missing image alt or dimensions, SEO metadata, heading order and placeholder text |
+| `npm run verify`       | format:check → check → build → audit:output                                                                       |
 
-Run `npm run verify` before pushing; CI runs the same steps.
+## Page structure
 
----
+A single page, `src/pages/index.astro`, with anchor navigation:
+
+`#about` · `#interests` · `#work` · `#experience` · `#publications` ·
+`#education` · `#contact`
+
+Secondary detail (project internals, paper findings) sits inside
+`src/components/Accordion.astro`, which wraps native `<details>`/`<summary>` so
+it is keyboard operable and announced as a disclosure with no JavaScript.
 
 ## Where to edit your information
 
-Almost everything personal lives in **one file**.
+Nearly everything lives in **[`src/data/site.ts`](src/data/site.ts)**:
 
-| What                                                             | File                                                                                         |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Name, title, tagline, location, email, CV path, meta description | [`src/data/site.ts`](src/data/site.ts) → `person`                                            |
-| Biography paragraphs                                             | `src/data/site.ts` → `bio`                                                                   |
-| Email / GitHub / LinkedIn links                                  | `src/data/site.ts` → `socials`                                                               |
-| Research interests                                               | `src/data/site.ts` → `researchInterests`                                                     |
-| Jobs and roles                                                   | `src/data/site.ts` → `experience`                                                            |
-| Degrees                                                          | `src/data/site.ts` → `education`                                                             |
-| Papers                                                           | `src/data/site.ts` → `publications`                                                          |
-| Scholarships and awards                                          | `src/data/site.ts` → `awards`                                                                |
-| Skills / tools (grouped lists, no ratings)                       | `src/data/site.ts` → `capabilities`                                                          |
-| Spoken languages                                                 | `src/data/site.ts` → `spokenLanguages`                                                       |
-| Header/footer navigation                                         | `src/data/site.ts` → `nav`                                                                   |
-| **CV PDF**                                                       | replace `public/cv/Okore-Joel-Chidike-CV.pdf` (keep the filename, or update `person.cvPath`) |
-| **Photographs**                                                  | `src/assets/images/` — see [Images](#images)                                                 |
-| Contact-page topics ("what I'd like to hear about")              | [`src/pages/contact.astro`](src/pages/contact.astro) → `topics`                              |
-| Home page intro line above the contact buttons                   | [`src/pages/index.astro`](src/pages/index.astro) → the `outro__lead` paragraph               |
-| About page headline and standfirst                               | [`src/pages/about.astro`](src/pages/about.astro) → `<PageHeader>`                            |
-| Social share image                                               | `public/og/joel-okore-og.jpg` — regenerate with `./scripts/generate-og.sh`                   |
-| Favicon                                                          | `public/favicon.svg` (+ `favicon.ico`, `apple-touch-icon.png`)                               |
+| What                                             | Export         |
+| ------------------------------------------------ | -------------- |
+| Name, title, email, CV path, meta description    | `person`       |
+| Hero paragraph                                   | `heroIntro`    |
+| About paragraphs                                 | `about`        |
+| Email, GitHub, LinkedIn, Scholar, ORCID          | `links`        |
+| Research interests                               | `interests`    |
+| Roles                                            | `experience`   |
+| Papers, DOI, plain-English summary, detail panel | `publications` |
+| Degrees                                          | `education`    |
+| Anchor navigation                                | `sections`     |
 
-### Case studies
+Other files:
+
+- **CV PDF** — `public/cv/Okore-Joel-Chidike-CV.pdf` (keep the filename, or
+  update `person.cvPath`)
+- **Portrait** — `src/assets/images/joel-portrait.jpg`, 4:5. Alt text is set in
+  `src/pages/index.astro`.
+- **Social card** — `public/og/joel-okore-og.jpg`; regenerate with
+  `./scripts/generate-og.sh` (needs ImageMagick and `fonttools`)
+- **Favicon and mark** — `public/favicon.svg` and
+  `src/components/Mark.astro`
+
+### Projects
 
 One Markdown file per project in [`src/content/projects/`](src/content/projects/).
-The frontmatter is schema-validated in
-[`src/content.config.ts`](src/content.config.ts) — the build fails on a typo,
-which is intentional.
+Frontmatter is schema-validated in
+[`src/content.config.ts`](src/content.config.ts), so a typo fails the build.
 
 ```yaml
 ---
-title: 'Full title, used as the page H1'
-shortTitle: 'Card and breadcrumb title'
-tagline: 'One line, sentence case, no trailing full stop'
-summary: 'Two sentences max — the card blurb.'
-seoDescription: 'Optional ~150-character version for search results.'
-kind: 'MSc research · systems'
-period: '2025 — 2026'
-status: 'Research prototype' # Research | Research prototype | Prototype | Published paper
-featured: true # show on the home page
-order: 1 # ascending sort across the index
-stack: [NFStream, XGBoost] # rendered as the "Technology" rail
-domains: [Encrypted traffic analysis] # rendered as the "Domains" rail
-evidence: # renders the results table; omit or leave [] if you have no figures
-  - label: 'Detection F1'
-    value: '≈ 0.97'
-    note: 'Scope, dataset or caveat — required, so no number stands alone.'
-links:
-  - label: 'Source repository'
-    href: 'https://github.com/...'
-disclosure: 'Verbatim scope disclosure, rendered above the case study.'
+title: 'Aegis'
+period: '2025 – 2026'
+purpose: 'One sentence: what it is for.'
+contribution: 'One or two sentences: what I actually did.'
+outcome: 'Optional. Only when a source backs it up.' # omit rather than estimate
+repo: 'https://github.com/...'
+order: 1
 ---
 ```
 
-The body follows a fixed section order, and each `##` becomes an entry in the
-page's "On this page" rail:
+The Markdown body becomes the accordion panel: architecture, method, datasets,
+evaluation, and limits. Keep links in frontmatter rather than the body so they
+stay correct under a base path.
 
-```
-## Problem
-## My role
-## Approach
-## Evidence and results
-## Limitations
-## Links
-```
-
-**Adding a project:** drop a new `.md` file in `src/content/projects/`, give it
-an unused `order`, and it appears on `/projects` and at
-`/projects/<filename>` automatically. Nothing else needs registering.
-
-**Unverified information** is marked with `<!-- TODO(joel): ... -->` HTML
-comments in the Markdown source. These are stripped from the built HTML by a
-rehype plugin, so they never ship — they exist for you, not for readers. Search
-for them with:
-
-```bash
-grep -rn "TODO(joel)" src/
-```
-
-### Images
-
-Source images live in `src/assets/images/` and are optimised at build time by
-`astro:assets` (WebP, responsive `srcset`, explicit `width`/`height` to prevent
-layout shift). To swap a photograph, replace the file and keep the aspect ratio
-roughly the same:
-
-| File                       | Used on         | Aspect        |
-| -------------------------- | --------------- | ------------- |
-| `joel-portrait.jpg`        | home hero       | 4:5 portrait  |
-| `joel-portrait-square.jpg` | about biography | 1:1           |
-| `joel-commencement.jpg`    | about education | 8:5 landscape |
-
-Alt text is written inline where each image is used; update it when you change
-the photograph.
-
----
+Adding a project means adding a file and giving it an unused `order`.
 
 ## Deployment
 
-Deploys run from [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
-on every push to `main`, and can be triggered manually from the Actions tab.
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) runs on every
+push to `main` and can be triggered from the Actions tab.
 
-### First-time setup
-
-1. Push this directory to a GitHub repository.
+1. Push to a GitHub repository.
 2. **Settings → Pages → Build and deployment → Source: GitHub Actions.**
-3. Push to `main`. The workflow formats, type-checks, builds, audits the output
-   and publishes `dist/`.
+3. Push to `main`.
 
 The workflow passes the origin and base path from `actions/configure-pages`
-into the build, so **a project site, a user site and a custom domain all work
-without editing any code**.
+into the build, so a project site, a user site and a custom domain all work
+without editing code. Local builds fall back to the defaults at the top of
+[`astro.config.mjs`](astro.config.mjs).
 
-### Deployment targets
+| Target                                | `SITE_URL`                   | `BASE_PATH`  |
+| ------------------------------------- | ---------------------------- | ------------ |
+| Project site (default)                | `https://joellots.github.io` | `/portfolio` |
+| User site (repo `Joellots.github.io`) | `https://joellots.github.io` | _(empty)_    |
+| Custom domain                         | `https://your-domain`        | _(empty)_    |
 
-Local builds fall back to the defaults at the top of
-[`astro.config.mjs`](astro.config.mjs). Change them there if your local preview
-should match a different target:
-
-| Target                                    | `SITE_URL`                   | `BASE_PATH`  |
-| ----------------------------------------- | ---------------------------- | ------------ |
-| Project site (default) — repo `portfolio` | `https://joellots.github.io` | `/portfolio` |
-| User site — repo `Joellots.github.io`     | `https://joellots.github.io` | _(empty)_    |
-| Custom domain                             | `https://your-domain`        | _(empty)_    |
-
-You can test any of them locally:
+Test any of them locally:
 
 ```bash
 SITE_URL="https://example.com" BASE_PATH="" npm run build
 ```
 
-### Custom domain
+For a custom domain, add `public/CNAME` containing the bare domain, point DNS
+at GitHub Pages, then set it under Settings → Pages and enable _Enforce HTTPS_.
 
-1. Add a `public/CNAME` file containing the bare domain, e.g. `joelokore.dev`.
-2. Point DNS at GitHub Pages (`A` records to GitHub's four Pages IPs, or a
-   `CNAME` record to `joellots.github.io` for a subdomain).
-3. **Settings → Pages → Custom domain**, then enable _Enforce HTTPS_.
+## Design notes
 
-`actions/configure-pages` picks the domain up automatically, so canonical URLs,
-Open Graph tags, the sitemap and `robots.txt` follow with no code change.
+**Tokens.** Colour, type, spacing and motion live as custom properties in
+[`src/styles/tokens.css`](src/styles/tokens.css). Light is the base palette on
+`:root`. Dark is defined twice, once under `prefers-color-scheme` and once
+under `[data-theme='dark']`, so the system default and the manual toggle both
+resolve. Dark is a soft neutral grey (`#1b1c1f`) rather than near-black. Every
+text colour is annotated with its measured contrast ratio; all pass WCAG AA.
 
----
+**Type.** IBM Plex Sans for interface, Source Serif 4 for reading, IBM Plex
+Mono for dates and small labels. Latin subsets are self-hosted in
+`src/assets/fonts/`, vendored from the Fontsource packages in
+`devDependencies`. The three faces used above the fold are preloaded.
 
-## Design and architecture notes
+**Links.** Internal hrefs go through `url()` in
+[`src/lib/url.ts`](src/lib/url.ts), which applies the base path and normalises
+trailing slashes so they match the sitemap.
 
-**Tokens.** All colour, type, spacing and motion values are CSS custom
-properties in [`src/styles/tokens.css`](src/styles/tokens.css). Light is the
-base palette on `:root`; dark is defined twice — once under
-`prefers-color-scheme` (guarded so an explicit light choice wins) and once under
-`[data-theme='dark']` — so the system default and the manual toggle both
-resolve correctly. Every text/background pair is annotated with its measured
-WCAG contrast ratio.
+**Motion.** Only two transitions exist: link colour and the accordion chevron.
+`prefers-reduced-motion: reduce` disables both, along with smooth scrolling.
 
-**Type.** IBM Plex Sans for headings and interface, Source Serif 4 for
-long-form reading, IBM Plex Mono for metadata, labels and data. Latin subsets
-are self-hosted from `src/assets/fonts/` (vendored from the Fontsource packages
-in `devDependencies`); the two faces used above the fold are preloaded.
-
-**Base paths.** Every internal link goes through `url()` in
-[`src/lib/url.ts`](src/lib/url.ts), which prefixes the configured base path and
-normalises trailing slashes so links match the generated sitemap and avoid a
-redirect on GitHub Pages. Markdown bodies get the same treatment from a rehype
-plugin in [`src/lib/rehype-base-url.mjs`](src/lib/rehype-base-url.mjs).
-
-**JavaScript.** One inline script stamps the stored theme before first paint
-(no flash), and one ~600-byte module handles the toggle. Nothing else ships.
-
-**Motion.** Transitions are short and limited to colour and small translations.
-`prefers-reduced-motion: reduce` disables them and smooth scrolling globally.
-
-**Accuracy.** Every figure on the site traces to the CV or the paper it
-describes. Nothing is estimated. Projects with no recorded metrics have an
-empty `evidence: []` block and say so in the case study rather than carrying
-invented numbers.
+**Accuracy.** Figures on the page trace to the thesis or the published paper.
+Where a project has no recorded metrics, it says so instead of estimating.
 
 ## Verified
 
-Checked against the built output at the time of writing:
+At the time of writing, against the built output:
 
-- Lighthouse (desktop): **100 / 100 / 100 / 100** on home, projects, about,
-  contact and case-study pages
-- Lighthouse (mobile): performance **97–99**, accessibility, best practices and
-  SEO **100**
-- No horizontal overflow across 9 pages × 5 viewport widths (360–1440px)
-- `npm run audit:output`: no broken internal links, every image has alt text
-  and intrinsic dimensions, one `<h1>` per page, no placeholder text
+- Lighthouse mobile: performance 99, accessibility 100, best practices 100,
+  SEO 100
+- No horizontal overflow at 360, 414, 768, 1024 and 1440 px
+- `npm run audit:output`: no failures

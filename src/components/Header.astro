@@ -1,174 +1,166 @@
 ---
-import { nav, person } from '../data/site';
-import { url, isCurrent } from '../lib/url';
+import { person, sections } from '../data/site';
+import { url } from '../lib/url';
 import Mark from './Mark.astro';
 import ThemeToggle from './ThemeToggle.astro';
-
-const pathname = Astro.url.pathname;
 ---
 
-<header class="site-header">
-  <div class="shell site-header__inner">
+<header class="masthead">
+  <div class="shell masthead__inner">
     <a class="brand" href={url('/')}>
-      <span class="brand__mark"><Mark size={20} /></span>
-      <span class="brand__name">{person.siteName}</span>
-      <span class="brand__role">{person.title}</span>
+      <Mark size={22} />
+      <span>{person.shortName}</span>
     </a>
 
-    <nav class="nav" aria-label="Primary">
+    <nav class="nav" aria-label="Sections">
       <ul class="nav__list" role="list">
         {
-          nav.map((item) => {
-            const current = isCurrent(item.href, pathname);
-            return (
-              <li>
-                <a
-                  class="nav__link"
-                  href={url(item.href)}
-                  aria-current={current ? 'page' : undefined}
-                >
-                  {item.label}
-                </a>
-              </li>
-            );
-          })
+          sections.map((section) => (
+            <li>
+              <a class="nav__link" href={`#${section.id}`} data-nav-link={section.id}>
+                {section.label}
+              </a>
+            </li>
+          ))
         }
       </ul>
-      <ThemeToggle />
     </nav>
+
+    <ThemeToggle />
   </div>
 </header>
 
 <style>
-  .site-header {
+  .masthead {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--c-bg) 88%, transparent);
-    backdrop-filter: blur(10px);
-    border-bottom: var(--hairline) solid var(--c-rule);
+    background: color-mix(in srgb, var(--c-bg) 90%, transparent);
+    backdrop-filter: blur(12px);
   }
 
-  @supports not (backdrop-filter: blur(10px)) {
-    .site-header {
+  @supports not (backdrop-filter: blur(12px)) {
+    .masthead {
       background: var(--c-bg);
     }
   }
 
-  .site-header__inner {
+  .masthead__inner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: var(--s-4);
-    min-block-size: 3.75rem;
+    min-block-size: 3.5rem;
   }
-
-  /* -- brand ------------------------------------------------------------- */
 
   .brand {
-    display: grid;
-    grid-template-columns: auto auto;
-    align-items: center;
-    column-gap: var(--s-3);
-    text-decoration: none;
-    color: var(--c-ink);
-  }
-
-  .brand__mark {
-    display: grid;
-    grid-row: 1 / span 2;
-    color: var(--c-accent);
-  }
-
-  .brand__name {
-    white-space: nowrap;
-    font-size: 0.9375rem;
-    font-weight: 550;
-    letter-spacing: -0.01em;
-    line-height: 1.15;
-  }
-
-  .brand__role {
-    font-family: var(--font-mono);
-    font-size: var(--t-micro);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--c-ink-muted);
-    line-height: 1.2;
-  }
-
-  .brand:hover .brand__name {
-    color: var(--c-accent);
-  }
-
-  /* -- nav --------------------------------------------------------------- */
-
-  .nav {
     display: flex;
     align-items: center;
-    gap: clamp(0.25rem, 1.5vw, 0.75rem);
+    gap: var(--s-2);
+    flex: none;
+    font-size: 1rem;
+    font-weight: 550;
+    letter-spacing: -0.015em;
+    color: var(--c-ink);
+    text-decoration: none;
+  }
+
+  .brand :global(svg) {
+    color: var(--c-accent);
+  }
+
+  /* Scrolls within itself on narrow viewports rather than widening the page. */
+  .nav {
+    flex: 1;
+    min-inline-size: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
   }
 
   .nav__list {
     display: flex;
-    align-items: center;
-    gap: clamp(0.125rem, 1.4vw, 0.5rem);
+    justify-content: flex-end;
+    gap: clamp(0.125rem, 1vw, 0.375rem);
     margin: 0;
+  }
+
+  /* Keep intrinsic width so the strip scrolls instead of squeezing the
+     links into overlapping tap targets. */
+  .nav__list > li {
+    flex: none;
   }
 
   .nav__link {
     display: inline-block;
-    padding: var(--s-2) var(--s-3);
-    font-size: 0.875rem;
-    color: var(--c-ink-muted);
+    padding: 0.7rem var(--s-2);
+    font-size: var(--t-small);
+    line-height: 1.4;
+    color: var(--c-ink-faint);
     text-decoration: none;
-    border-radius: var(--radius);
     white-space: nowrap;
+    border-radius: var(--radius);
   }
 
   .nav__link:hover {
     color: var(--c-ink);
   }
 
-  .nav__link[aria-current='page'] {
+  .nav__link[aria-current='true'] {
     color: var(--c-ink);
-    box-shadow: inset 0 -2px 0 0 var(--c-accent);
   }
 
-  @media (max-width: 30rem) {
-    .brand__role {
-      display: none;
-    }
-
-    .nav__link {
-      padding-inline: var(--s-2);
-      font-size: 0.8125rem;
-    }
-  }
-
-  /*
-   * Below ~416px the wordmark and four nav items cannot both fit. The mark
-   * carries the identity; the name stays in the accessibility tree (visually
-   * hidden rather than display:none) so the link keeps its accessible name.
-   */
-  @media (max-width: 26rem) {
-    .brand__name {
-      position: absolute;
-      inline-size: 1px;
-      block-size: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-
-    .brand {
-      column-gap: 0;
-    }
-
-    .nav__link {
-      padding-inline: var(--s-1);
+  @media (max-width: 40rem) {
+    .nav__list {
+      justify-content: flex-start;
+      padding-inline-start: var(--s-2);
     }
   }
 </style>
+
+<script>
+  // Marks the section currently in view. No animation, just state.
+  const links = new Map<string, HTMLAnchorElement>();
+  for (const el of document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')) {
+    const id = el.dataset.navLink;
+    if (id) links.set(id, el);
+  }
+
+  const targets = [...links.keys()]
+    .map((id) => document.getElementById(id))
+    .filter((el): el is HTMLElement => el !== null);
+
+  if (targets.length > 0 && 'IntersectionObserver' in window) {
+    const visible = new Set<string>();
+
+    const paint = () => {
+      let current: string | null = null;
+      for (const [id] of links) {
+        if (visible.has(id)) {
+          current = id;
+          break;
+        }
+      }
+      for (const [id, link] of links) {
+        if (id === current) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        paint();
+      },
+      { rootMargin: '-20% 0px -70% 0px' }
+    );
+
+    for (const target of targets) observer.observe(target);
+  }
+</script>

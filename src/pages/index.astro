@@ -1,453 +1,498 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Section from '../components/Section.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import ActionLink from '../components/ActionLink.astro';
-import { person, bioShort, experience, education, publications, socials } from '../data/site';
+import Accordion from '../components/Accordion.astro';
+import IconLink from '../components/IconLink.astro';
+import {
+  person,
+  heroIntro,
+  about,
+  interests,
+  experience,
+  publications,
+  education,
+  links,
+} from '../data/site';
 import { url, absoluteUrl } from '../lib/url';
 import portrait from '../assets/images/joel-portrait.jpg';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const featured = projects.filter((p) => p.data.featured);
-
-const currentRole = experience[0]!;
-const focusAreas = [
-  'Encrypted traffic analysis',
-  'Explainable detection',
-  'Graph-based learning',
-] as const;
+const rendered = await Promise.all(
+  projects.map(async (project) => ({ project, Content: (await render(project)).Content }))
+);
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: person.fullName,
-  alternateName: person.siteName,
   jobTitle: person.title,
   description: person.metaDescription,
-  email: `mailto:${person.email}`,
   url: absoluteUrl('/', Astro.site),
   image: absoluteUrl('/og/joel-okore-og.jpg', Astro.site),
-  sameAs: socials.filter((s) => s.external).map((s) => s.href),
-  knowsAbout: [
-    'Network security',
-    'Encrypted traffic analysis',
-    'Explainable artificial intelligence',
-    'Graph representation learning',
-    'Intrusion detection',
-    'Security automation',
-  ],
-  alumniOf: education.map((study) => ({
-    '@type': 'CollegeOrUniversity',
-    name: study.org,
-  })),
+  sameAs: links.filter((link) => link.icon !== 'email').map((link) => link.href),
+  knowsAbout: interests.map((interest) => interest.name),
+  alumniOf: education.map((study) => ({ '@type': 'CollegeOrUniversity', name: study.org })),
 };
 ---
 
 <BaseLayout
-  title={`${person.siteName} — ${person.title}`}
+  title={`${person.shortName} Okore · ${person.title}`}
   description={person.metaDescription}
   path="/"
   jsonLd={jsonLd}
 >
-  <!-- ============================================================ hero -->
-  <div class="hero">
+  <!-- ============================================================= hero -->
+  <section class="hero">
     <div class="shell hero__inner">
       <div class="hero__text">
-        <p class="label hero__eyebrow">
-          <span class="hero__dot" aria-hidden="true"></span>
-          {person.location}
-        </p>
-
-        <h1 class="hero__heading">
-          <span class="hero__name">{person.fullName}</span>
-          <span class="hero__role">{person.title}</span>
-        </h1>
-
-        <p class="hero__tagline">{person.tagline}</p>
-
-        <ul class="hero__focus" role="list">
-          {focusAreas.map((area) => <li>{area}</li>)}
-        </ul>
+        <h1 class="hero__name">{person.fullName}</h1>
+        <p class="hero__role">{person.title}</p>
+        <p class="hero__intro">{heroIntro}</p>
 
         <div class="hero__actions">
-          <ActionLink href={url('/projects')} variant="solid">View projects</ActionLink>
-          <ActionLink href={url(person.cvPath)} download>
-            Download CV
-            <span class="hero__hint mono" aria-hidden="true">PDF</span>
-          </ActionLink>
-          <ActionLink href={`mailto:${person.email}`} variant="quiet">
-            {person.email}
-          </ActionLink>
+          <ul class="iconrow" role="list">
+            {
+              links.map((link) => (
+                <li>
+                  <IconLink href={link.href} label={link.label} icon={link.icon} />
+                </li>
+              ))
+            }
+          </ul>
+          <a class="cv" href={url(person.cvPath)} download>CV (PDF)</a>
         </div>
       </div>
 
-      <figure class="hero__figure">
-        <div class="hero__frame">
-          <Image
-            src={portrait}
-            alt="Okore Joel Chidike, photographed outdoors in a tailored suit."
-            widths={[320, 480, 640]}
-            sizes="(min-width: 62rem) 22rem, (min-width: 48rem) 40vw, 70vw"
-            loading="eager"
-            fetchpriority="high"
-            decoding="sync"
-            quality={82}
-          />
-        </div>
-        <figcaption class="mono hero__caption">{person.fullName}</figcaption>
-      </figure>
+      <div class="hero__portrait">
+        <Image
+          src={portrait}
+          alt={`Portrait photograph of ${person.fullName}.`}
+          widths={[320, 460, 640, 880]}
+          sizes="(min-width: 56rem) 20rem, (min-width: 34rem) 40vw, 68vw"
+          loading="eager"
+          fetchpriority="high"
+          decoding="sync"
+          quality={84}
+        />
+      </div>
     </div>
-  </div>
+  </section>
 
   <div class="shell">
-    <!-- ================================================= selected work -->
-    <Section
-      index="01"
-      id="work"
-      title="Selected work"
-      action={{ label: 'All projects', href: url('/projects') }}
-    >
-      <div class="work">
-        {
-          featured.map((project, i) => (
-            <div class:list={['work__cell', i === 0 && 'work__cell--wide']}>
-              <ProjectCard
-                project={project}
-                index={String(project.data.order).padStart(2, '0')}
-                feature={i === 0}
-              />
-            </div>
-          ))
-        }
-      </div>
-    </Section>
-
-    <!-- ==================================================== background -->
-    <Section index="02" id="background" title="Background">
-      <div class="background">
-        <div class="prose background__prose">
-          {bioShort.map((paragraph) => <p>{paragraph}</p>)}
-          <p class="background__more">
-            <a href={url('/about')}>Read the full background <span aria-hidden="true">→</span></a>
-          </p>
+    <!-- ========================================================== about -->
+    <section id="about" class="section" aria-labelledby="about-title">
+      <h2 id="about-title" class="section__title">About</h2>
+      <div class="section__body">
+        <div class="prose">
+          {about.map((paragraph) => <p>{paragraph}</p>)}
         </div>
+      </div>
+    </section>
 
-        <dl class="facts">
-          <div class="facts__row">
-            <dt class="label">Now</dt>
-            <dd>
-              <p class="facts__primary">{currentRole.title}</p>
-              <p class="facts__secondary">{currentRole.org}</p>
-              <p class="facts__meta mono">{currentRole.period}</p>
-            </dd>
-          </div>
+    <!-- ====================================================== interests -->
+    <section id="interests" class="section" aria-labelledby="interests-title">
+      <h2 id="interests-title" class="section__title">Research interests</h2>
+      <div class="section__body">
+        <dl class="interests">
           {
-            education.slice(0, 2).map((study) => (
-              <div class="facts__row">
-                <dt class="label">{study.credential.startsWith('MSc') ? 'MSc' : 'BSc'}</dt>
-                <dd>
-                  <p class="facts__primary">{study.credential.replace(/^\w+,\s*/, '')}</p>
-                  <p class="facts__secondary">{study.org}</p>
-                  <p class="facts__meta mono">{study.period}</p>
-                </dd>
+            interests.map((interest) => (
+              <div class="interests__row">
+                <dt>{interest.name}</dt>
+                <dd>{interest.detail}</dd>
               </div>
             ))
           }
-          <div class="facts__row">
-            <dt class="label">Paper</dt>
-            <dd>
-              <p class="facts__primary">{publications[0]!.title}</p>
-              <p class="facts__secondary">{publications[0]!.venue}</p>
-              <p class="facts__meta mono">{publications[0]!.year}</p>
-            </dd>
-          </div>
         </dl>
       </div>
-    </Section>
+    </section>
 
-    <!-- ======================================================= contact -->
-    <Section index="03" id="contact" title="Get in touch">
-      <div class="outro">
-        <p class="outro__lead">
-          I’m open to research collaboration, and to engineering and research roles in detection,
-          security automation and applied machine learning.
-        </p>
-        <div class="outro__actions">
-          <ActionLink href={url('/contact')} variant="solid">Contact</ActionLink>
-          <ActionLink href={url('/about')}>About me</ActionLink>
-        </div>
+    <!-- =========================================================== work -->
+    <section id="work" class="section" aria-labelledby="work-title">
+      <h2 id="work-title" class="section__title">Selected work</h2>
+      <div class="section__body">
+        <ol class="work" role="list">
+          {
+            rendered.map(({ project, Content }) => (
+              <li class="project">
+                <div class="project__head">
+                  <h3 class="project__title">{project.data.title}</h3>
+                  <span class="project__period">{project.data.period}</span>
+                </div>
+
+                <p class="project__purpose">{project.data.purpose}</p>
+                <p class="project__meta">{project.data.contribution}</p>
+                {project.data.outcome && <p class="project__outcome">{project.data.outcome}</p>}
+
+                {project.data.repo && (
+                  <p class="project__link">
+                    <a href={project.data.repo} target="_blank" rel="noopener noreferrer">
+                      Source on GitHub
+                    </a>
+                  </p>
+                )}
+
+                <Accordion label="How it works">
+                  <Content />
+                </Accordion>
+              </li>
+            ))
+          }
+        </ol>
       </div>
-    </Section>
+    </section>
+
+    <!-- ===================================================== experience -->
+    <section id="experience" class="section" aria-labelledby="experience-title">
+      <h2 id="experience-title" class="section__title">Experience</h2>
+      <div class="section__body">
+        <ol class="entries" role="list">
+          {
+            experience.map((role) => (
+              <li class="entry">
+                <p class="entry__period">{role.period}</p>
+                <div>
+                  <h3 class="entry__title">{role.title}</h3>
+                  <p class="entry__org">{role.org}</p>
+                  <p class="entry__summary">{role.summary}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- =================================================== publications -->
+    <section id="publications" class="section" aria-labelledby="publications-title">
+      <h2 id="publications-title" class="section__title">Publications</h2>
+      <div class="section__body">
+        <ol class="entries" role="list">
+          {
+            publications.map((pub) => (
+              <li class="entry">
+                <p class="entry__period">
+                  {pub.venue} {pub.year}
+                </p>
+                <div>
+                  <h3 class="entry__title">{pub.title}</h3>
+                  <p class="entry__summary">{pub.plain}</p>
+                  <p class="project__link">
+                    <a href={pub.doi} target="_blank" rel="noopener noreferrer">
+                      Read the paper (DOI)
+                    </a>
+                  </p>
+                  <Accordion label="What the paper found">
+                    {pub.details.map((detail) => (
+                      <p>{detail}</p>
+                    ))}
+                    <p class="authors">{pub.authors}</p>
+                  </Accordion>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- ====================================================== education -->
+    <section id="education" class="section" aria-labelledby="education-title">
+      <h2 id="education-title" class="section__title">Education</h2>
+      <div class="section__body">
+        <ol class="entries" role="list">
+          {
+            education.map((study) => (
+              <li class="entry">
+                <p class="entry__period">{study.period}</p>
+                <div>
+                  <h3 class="entry__title">{study.degree}</h3>
+                  <p class="entry__org">{study.org}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- ======================================================== contact -->
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <h2 id="contact-title" class="section__title">Contact</h2>
+      <div class="section__body">
+        <p class="contact__lead">
+          The quickest way to reach me is email. I am glad to talk about research, collaboration, or
+          anything on this page.
+        </p>
+        <ul class="iconrow" role="list">
+          {
+            links.map((link) => (
+              <li>
+                <IconLink href={link.href} label={link.label} icon={link.icon} />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
   </div>
 </BaseLayout>
 
 <style>
   /* ------------------------------------------------------------- hero */
 
-  .hero {
-    border-block-end: var(--hairline) solid var(--c-rule);
-    background: linear-gradient(to bottom, var(--c-bg-sunken), var(--c-bg) 70%);
-  }
-
   .hero__inner {
     display: grid;
     gap: var(--s-7);
-    padding-block: clamp(2.75rem, 1.5rem + 5vw, 5.5rem) clamp(2.25rem, 1.5rem + 3vw, 4rem);
-  }
-
-  .hero__eyebrow {
-    display: flex;
+    padding-block: clamp(2.5rem, 1.4rem + 5vw, 5.5rem) clamp(1rem, 0.5rem + 2vw, 2rem);
     align-items: center;
-    gap: var(--s-2);
-    margin-block-end: var(--s-5);
-  }
-
-  .hero__dot {
-    inline-size: 0.4rem;
-    block-size: 0.4rem;
-    border-radius: 50%;
-    background: var(--c-accent);
-  }
-
-  .hero__heading {
-    display: grid;
-    gap: var(--s-2);
   }
 
   .hero__name {
-    display: block;
-    font-size: var(--t-display);
-    font-weight: 500;
-    line-height: 0.98;
-    letter-spacing: -0.03em;
+    max-inline-size: 12ch;
   }
 
   .hero__role {
-    display: block;
+    margin-block-start: var(--s-4);
     font-family: var(--font-mono);
-    font-size: clamp(0.8125rem, 0.72rem + 0.4vw, 1rem);
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: var(--t-small);
+    letter-spacing: 0.06em;
     color: var(--c-accent);
   }
 
-  .hero__tagline {
+  .hero__intro {
     margin-block-start: var(--s-5);
-    max-inline-size: 40rem;
+    max-inline-size: 34rem;
     font-family: var(--font-serif);
     font-size: var(--t-lead);
-    line-height: 1.5;
+    line-height: 1.55;
     color: var(--c-ink-muted);
-  }
-
-  .hero__focus {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-2) 0;
-    margin-block-start: var(--s-5);
-    padding-block-start: var(--s-5);
-    border-block-start: var(--hairline) solid var(--c-rule);
-    list-style: none;
-  }
-
-  .hero__focus li {
-    font-family: var(--font-mono);
-    font-size: var(--t-tiny);
-    letter-spacing: 0.04em;
-    color: var(--c-ink-muted);
-  }
-
-  .hero__focus li:not(:last-child)::after {
-    content: '/';
-    margin-inline: 0.75em;
-    color: var(--c-rule-strong);
   }
 
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--s-3) var(--s-4);
+    gap: var(--s-4);
     margin-block-start: var(--s-6);
+    margin-inline-start: calc(var(--s-3) * -1);
   }
 
-  .hero__hint {
-    font-size: var(--t-micro);
-    color: var(--c-ink-faint);
-    letter-spacing: 0.08em;
+  .cv {
+    font-size: var(--t-small);
+    color: var(--c-ink-muted);
+    text-decoration-color: var(--c-rule-strong);
   }
 
-  /* -- portrait plate ---------------------------------------------------- */
-
-  .hero__figure {
-    margin: 0;
-    max-inline-size: 20rem;
-  }
-
-  .hero__frame {
+  .hero__portrait {
+    max-inline-size: 17rem;
     padding: 0.5rem;
-    background: var(--c-surface);
-    border: var(--hairline) solid var(--c-rule);
-    border-radius: var(--radius-lg);
+    background: var(--c-raised);
+    border-radius: 5px;
   }
 
-  .hero__frame :global(img) {
+  .hero__portrait :global(img) {
     inline-size: 100%;
     block-size: auto;
     aspect-ratio: 4 / 5;
     object-fit: cover;
-    border-radius: 1px;
-    background: var(--c-bg-sunken);
+    border-radius: var(--radius);
+    background: var(--c-raised);
   }
 
-  .hero__caption {
-    margin-block-start: var(--s-3);
-    font-size: var(--t-micro);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--c-ink-faint);
-  }
-
-  @media (min-width: 48rem) {
+  @media (min-width: 34rem) {
     .hero__inner {
       grid-template-columns: minmax(0, 1fr) auto;
-      align-items: start;
       gap: var(--s-8);
     }
 
-    .hero__figure {
-      inline-size: clamp(13rem, 26vw, 20rem);
+    .hero__portrait {
+      inline-size: clamp(11rem, 26vw, 17rem);
       max-inline-size: none;
-      margin-block-start: 0.4rem;
     }
   }
 
-  /* --------------------------------------------------------- work grid */
+  /* --------------------------------------------------------- sections */
 
-  .work {
-    display: grid;
-    gap: var(--s-4);
+  .section {
+    padding-block-start: var(--s-section);
+    scroll-margin-top: 4.5rem;
+  }
+
+  .section__title {
+    font-size: var(--t-small);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--c-ink-faint);
+  }
+
+  .section__body {
+    margin-block-start: var(--s-5);
   }
 
   @media (min-width: 56rem) {
-    .work {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .section {
+      display: grid;
+      grid-template-columns: 8rem minmax(0, 1fr);
+      gap: var(--s-7);
     }
 
-    .work__cell--wide {
-      grid-column: 1 / -1;
+    .section__title {
+      padding-block-start: 0.35rem;
+    }
+
+    .section__body {
+      margin-block-start: 0;
     }
   }
 
-  /* --------------------------------------------------------- background */
+  /* -------------------------------------------------------- interests */
 
-  .background {
-    display: grid;
-    gap: var(--s-7);
-  }
-
-  .background__prose {
-    max-inline-size: var(--w-text);
-  }
-
-  .background__more a {
-    font-family: var(--font-sans);
-    font-size: 0.9375rem;
-    text-decoration: none;
-    color: var(--c-accent);
-  }
-
-  .background__more a:hover {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
-
-  .facts {
+  .interests {
     margin: 0;
     display: grid;
-    align-content: start;
-  }
-
-  .facts__row {
-    display: grid;
-    grid-template-columns: 4.5rem 1fr;
     gap: var(--s-4);
-    padding-block: var(--s-4);
-    border-block-start: var(--hairline) solid var(--c-rule);
+    max-inline-size: 40rem;
   }
 
-  .facts__row:first-child {
-    border-block-start: 0;
-    padding-block-start: 0;
+  .interests__row dt {
+    font-size: var(--t-base);
+    font-weight: 500;
+    color: var(--c-ink);
   }
 
-  .facts dt {
-    padding-block-start: 0.2rem;
+  .interests__row dd {
+    margin: 0.15rem 0 0;
+    font-size: var(--t-small);
+    line-height: 1.6;
+    color: var(--c-ink-muted);
   }
 
-  .facts dd {
+  /* ------------------------------------------------------------- work */
+
+  .work {
+    display: grid;
+    gap: var(--s-8);
     margin: 0;
   }
 
-  .facts__primary {
-    font-size: 0.9375rem;
-    font-weight: 500;
-    line-height: 1.4;
-  }
-
-  .facts__secondary {
-    font-size: 0.875rem;
-    color: var(--c-ink-muted);
-    margin-block-start: 0.15rem;
-  }
-
-  .facts__meta {
-    font-size: var(--t-micro);
-    color: var(--c-ink-faint);
-    margin-block-start: 0.3rem;
-    letter-spacing: 0.04em;
-  }
-
-  @media (min-width: 62rem) {
-    .background {
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-      gap: var(--s-9);
-    }
-  }
-
-  /* -------------------------------------------------------------- outro */
-
-  .outro {
-    display: grid;
-    gap: var(--s-5);
-    padding: var(--s-6);
-    border: var(--hairline) solid var(--c-rule);
-    border-radius: var(--radius-lg);
-    background: var(--c-surface);
-  }
-
-  .outro__lead {
-    font-family: var(--font-serif);
-    font-size: var(--t-lead);
-    line-height: 1.5;
-    max-inline-size: 46ch;
-  }
-
-  .outro__actions {
+  .project__head {
     display: flex;
     flex-wrap: wrap;
+    align-items: baseline;
     gap: var(--s-3);
   }
 
-  @media (min-width: 48rem) {
-    .outro {
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: var(--s-7);
-      padding: var(--s-7);
+  .project__title {
+    font-size: 1.25rem;
+    font-weight: 550;
+  }
+
+  .project__period,
+  .entry__period {
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    color: var(--c-ink-faint);
+  }
+
+  .project__period {
+    white-space: nowrap;
+  }
+
+  .project__purpose {
+    margin-block-start: var(--s-3);
+    max-inline-size: var(--w-text);
+    font-family: var(--font-serif);
+    font-size: var(--t-body);
+    line-height: var(--lh-prose);
+  }
+
+  .project__meta,
+  .project__outcome {
+    margin-block-start: var(--s-3);
+    max-inline-size: var(--w-text);
+    font-size: var(--t-small);
+    line-height: 1.65;
+    color: var(--c-ink-muted);
+  }
+
+  .project__link {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-small);
+  }
+
+  .project__link a {
+    color: var(--c-accent);
+    text-decoration-color: color-mix(in srgb, var(--c-accent) 40%, transparent);
+  }
+
+  /* ---------------------------------------- experience / pubs / study */
+
+  .entries {
+    display: grid;
+    gap: var(--s-6);
+    margin: 0;
+  }
+
+  .entry {
+    display: grid;
+    gap: var(--s-1);
+  }
+
+  .entry__period {
+    padding-block-start: 0.2rem;
+  }
+
+  .entry__title {
+    font-size: var(--t-h3);
+    font-weight: 550;
+  }
+
+  .entry__org {
+    margin-block-start: 0.1rem;
+    font-size: var(--t-small);
+    color: var(--c-ink-muted);
+  }
+
+  .entry__summary {
+    margin-block-start: var(--s-2);
+    max-inline-size: var(--w-text);
+    font-size: var(--t-small);
+    line-height: 1.65;
+    color: var(--c-ink-muted);
+  }
+
+  .authors {
+    font-family: var(--font-sans) !important;
+    font-size: var(--t-micro) !important;
+    color: var(--c-ink-faint) !important;
+  }
+
+  @media (min-width: 42rem) {
+    .entry {
+      grid-template-columns: 9.5rem minmax(0, 1fr);
+      gap: var(--s-5);
     }
+  }
+
+  /* ---------------------------------------------------------- contact */
+
+  .contact__lead {
+    max-inline-size: var(--w-text);
+    font-family: var(--font-serif);
+    font-size: var(--t-body);
+    line-height: var(--lh-prose);
+    color: var(--c-ink-muted);
+  }
+
+  .iconrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-1);
+    margin: var(--s-4) 0 0 calc(var(--s-3) * -1);
+  }
+
+  .hero__actions .iconrow {
+    margin: 0;
   }
 </style>

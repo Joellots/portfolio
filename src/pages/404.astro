@@ -1,33 +1,27 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ActionLink from '../components/ActionLink.astro';
 import { url } from '../lib/url';
 ---
 
 <BaseLayout
   title="Page not found"
-  description="That page does not exist. Browse the case studies, background and contact details for Joel Okore, security engineer and researcher."
+  description="That page does not exist. Head back to the homepage for work, publications and contact details."
   path="/404"
 >
   <div class="shell notfound">
-    <p class="label label--accent">Error 404</p>
+    <p class="eyebrow">Error 404</p>
     <h1>This page does not exist</h1>
     <p class="notfound__body">
-      The address you followed does not match anything on this site. It may have been renamed, or
-      the link may have been mistyped.
+      The link you followed does not match anything here. It may have been renamed, or mistyped.
     </p>
-    <div class="notfound__actions">
-      <ActionLink href={url('/')} variant="solid">Home</ActionLink>
-      <ActionLink href={url('/projects')}>Projects</ActionLink>
-      <ActionLink href={url('/contact')} variant="quiet">Contact</ActionLink>
-    </div>
+    <p class="notfound__back"><a href={url('/')}>Back to the homepage</a></p>
   </div>
 </BaseLayout>
 
 <style>
   .notfound {
     padding-block: clamp(4rem, 3rem + 6vw, 8rem);
-    max-inline-size: 36rem;
+    max-inline-size: 34rem;
   }
 
   .notfound h1 {
@@ -42,10 +36,11 @@ import { url } from '../lib/url';
     color: var(--c-ink-muted);
   }
 
-  .notfound__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-3);
+  .notfound__back {
     margin-block-start: var(--s-6);
+  }
+
+  .notfound__back a {
+    color: var(--c-accent);
   }
 </style>

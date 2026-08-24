@@ -1,125 +1,32 @@
 ---
-import { person, socials, nav } from '../data/site';
-import { url } from '../lib/url';
-import Mark from './Mark.astro';
+import { person } from '../data/site';
 
 const year = new Date().getFullYear();
 ---
 
-<footer class="site-footer">
-  <div class="shell site-footer__inner">
-    <div class="site-footer__identity">
-      <span class="site-footer__mark"><Mark size={20} /></span>
-      <p class="site-footer__name">{person.fullName}</p>
-      <p class="site-footer__role mono">{person.title}</p>
-      <p class="site-footer__role mono">{person.location}</p>
-    </div>
-
-    <nav class="site-footer__nav" aria-label="Footer">
-      <h2 class="label">Pages</h2>
-      <ul role="list">
-        {
-          nav.map((item) => (
-            <li>
-              <a href={url(item.href)}>{item.label}</a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
-
-    <div class="site-footer__nav">
-      <h2 class="label">Elsewhere</h2>
-      <ul role="list">
-        {
-          socials.map((item) => (
-            <li>
-              <a
-                href={item.href}
-                rel={item.external ? 'me noopener noreferrer' : 'me'}
-                target={item.external ? '_blank' : undefined}
-              >
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
-        <li><a href={url(person.cvPath)}>Curriculum vitae (PDF)</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="shell site-footer__base">
-    <p class="mono">© {year} {person.fullName}</p>
-    <p class="mono">Built with Astro · no trackers, no cookies</p>
+<footer class="footer">
+  <div class="shell footer__inner">
+    <p>© {year} {person.fullName}</p>
+    <p>Built with Astro. No trackers, no analytics.</p>
   </div>
 </footer>
 
 <style>
-  .site-footer {
+  .footer {
     margin-block-start: var(--s-section);
+    padding-block: var(--s-6) var(--s-7);
     border-block-start: var(--hairline) solid var(--c-rule);
-    background: var(--c-bg-sunken);
   }
 
-  .site-footer__inner {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-    gap: var(--s-6);
-    padding-block: var(--s-7) var(--s-6);
-  }
-
-  .site-footer__identity {
-    max-inline-size: 22rem;
-  }
-
-  .site-footer__mark {
-    display: block;
-    color: var(--c-accent);
-    margin-block-end: var(--s-3);
-  }
-
-  .site-footer__name {
-    font-weight: 550;
-    letter-spacing: -0.01em;
-  }
-
-  .site-footer__role {
-    color: var(--c-ink-muted);
-    font-size: var(--t-tiny);
-  }
-
-  .site-footer__nav ul {
-    list-style: none;
-    margin: var(--s-3) 0 0;
-    padding: 0;
-    display: grid;
-    gap: var(--s-2);
-  }
-
-  .site-footer__nav a {
-    font-size: 0.875rem;
-    color: var(--c-ink-muted);
-    text-decoration: none;
-  }
-
-  .site-footer__nav a:hover {
-    color: var(--c-accent);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
-
-  .site-footer__base {
+  .footer__inner {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     gap: var(--s-2) var(--s-5);
-    padding-block: var(--s-4) var(--s-6);
-    border-block-start: var(--hairline) solid var(--c-rule);
   }
 
-  .site-footer__base p {
+  .footer p {
+    font-size: var(--t-micro);
     color: var(--c-ink-faint);
-    font-size: var(--t-tiny);
   }
 </style>
