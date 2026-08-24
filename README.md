@@ -194,11 +194,26 @@ trailing slashes so they match the sitemap.
 **Motion.** Only two transitions exist: link colour and the accordion chevron.
 `prefers-reduced-motion: reduce` disables both, along with smooth scrolling.
 
-**No post-hydration reflow.** The tab panels and the slider controls are
-painted in their final state, and `<noscript>` restores the no-JS fallback.
-Doing it the other way round — rendering both tab panels, then hiding one once
-the script runs — cost 0.24 CLS on the live site while measuring 0 locally,
-where the script runs before first paint.
+**No layout shift.** Three separate causes were found and fixed by measuring
+the live site, all invisible locally because everything loads instantly there:
+
+1. The tab panels and slider controls were painted in a pre-hydration state and
+   rearranged by script. They now paint their final state, with `<noscript>`
+   restoring the no-JS fallback.
+2. The hero portrait wrapper used `max-inline-size` with `margin-inline: auto`.
+   Auto inline margins stop a grid item stretching, so the wrapper sized to
+   fit-content of an image that had no intrinsic size yet — zero until it
+   loaded, then 300px. It now takes a definite `inline-size`.
+3. `font-display: swap` rewrapped every line when the web fonts arrived. The
+   `Geist Fallback` and `Newsreader Fallback` faces in
+   [`src/styles/fonts.css`](src/styles/fonts.css) carry `size-adjust` and
+   vertical overrides computed from the shipped woff2 files, so the fallback
+   occupies identical space and the swap does not move anything.
+
+Together these took CLS from 0.262 to 0.001 and performance from 86 to 100
+under real (`--throttling-method=devtools`) throttling. Simulated throttling
+reports 0 either way, so verify with devtools throttling or against the live
+site.
 
 **Accuracy.** Figures on the page trace to the thesis or the published paper.
 Where a project has no recorded metrics, it says so instead of estimating.

@@ -272,8 +272,14 @@ const jsonLd = {
     margin-inline-start: calc(var(--s-3) * -1);
   }
 
+  /*
+   * A definite width, not max-inline-size: `margin-inline: auto` stops a grid
+   * item stretching, so the wrapper would size to fit-content of the image —
+   * zero until the image loads, which collapses the reserved box and shifts
+   * the whole page down when it arrives.
+   */
   .hero :global(.hero__portrait) {
-    max-inline-size: 15rem;
+    inline-size: min(15rem, 100%);
     margin-inline: auto;
   }
 
