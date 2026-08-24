@@ -75,13 +75,20 @@ const {
     border-radius: 61% 39% 47% 53% / 38% 54% 46% 62%;
   }
 
-  /* -- variant B: the same family, mirrored ------------------------------ */
+  /*
+   * -- variant B ---------------------------------------------------------
+   * Smaller, so it takes an even rim rather than an offset shape: at this
+   * size an offset reads as a lopsided smudge rather than as design. The
+   * shape is gentler for the same reason.
+   */
   .portrait--b :global(img),
   .portrait--b::before {
-    border-radius: 34% 66% 48% 52% / 59% 33% 67% 41%;
+    border-radius: 44% 56% 51% 49% / 50% 45% 55% 50%;
   }
 
   .portrait--b::before {
-    transform: translate(-0.85rem, 0.85rem);
+    inset: -0.3rem;
+    background: color-mix(in srgb, var(--c-accent) 70%, var(--c-bg));
+    transform: none;
   }
 </style>
