@@ -52,6 +52,8 @@ export interface SkillGroup {
 
 export const person = {
   fullName: 'Okore Joel Chidike',
+  /** The name used in visible copy, titles and social metadata. */
+  displayName: 'Joel Okore',
   /** Header brand and conversational references. */
   shortName: 'Joel',
   title: 'Security Engineer & Researcher',
@@ -80,7 +82,6 @@ export const keywords: readonly string[] = [
 export const about: readonly string[] = [
   'I am Joel Okore, a cybersecurity and machine learning researcher with a growing interest in graph-based learning, combinatorics, and trustworthy AI. My work focuses on building intelligent security systems that are practical and useful in real-world environments, particularly for detecting and responding to emerging security threats.',
   'I hold an MSc in Security and Network Engineering from Innopolis University and am currently pursuing an MSc in Advanced Combinatorics at the Moscow Institute of Physics and Technology (MIPT), with a focus on strengthening the mathematical foundations that support my work. Beyond research, I enjoy teaching and mentoring students, particularly in computer networks, cybersecurity, and distributed systems.',
-  'I’m especially interested in problems that sit between theory and practice, bringing together graph and network theory, machine learning, and secure systems engineering to build technologies we can understand and trust.',
 ];
 
 /* ------------------------------------------------------------------ links */
@@ -107,7 +108,6 @@ export const interests: readonly string[] = [
   'Machine Learning',
   'Cybersecurity',
   'Graph Representation Learning',
-  'Graph Neural Networks',
   'Temporal and Random Graphs',
   'Network Anomaly Detection',
   'Explainable Artificial Intelligence (XAI)',
@@ -226,12 +226,17 @@ export const education: readonly Study[] = [
 
 /* ------------------------------------------------------------ navigation */
 
-export const sections: readonly { readonly id: string; readonly label: string }[] = [
-  { id: 'about', label: 'About' },
+export const sections: readonly {
+  readonly id: string;
+  readonly label: string;
+  /** Shown on narrow viewports; the rest are desktop-only. */
+  readonly compact?: boolean;
+}[] = [
+  { id: 'about', label: 'About', compact: true },
   { id: 'interests', label: 'Interests' },
   { id: 'skills', label: 'Skills' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'experience', label: 'Experience' },
-  { id: 'publications', label: 'Publications' },
-  { id: 'contact', label: 'Contact' },
+  { id: 'projects', label: 'Projects', compact: true },
+  { id: 'experience', label: 'Experience', compact: true },
+  { id: 'publications', label: 'Publications', compact: true },
+  { id: 'contact', label: 'Contact', compact: true },
 ];

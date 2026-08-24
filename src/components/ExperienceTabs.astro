@@ -21,9 +21,10 @@ interface Props {
 
 const { academic, professional } = Astro.props;
 
+// Professional leads, and the first tab is the one selected on load.
 const panels = [
-  { id: 'academic', label: 'Academic', items: academic },
   { id: 'professional', label: 'Professional', items: professional },
+  { id: 'academic', label: 'Academic', items: academic },
 ] as const;
 
 const isOngoing = (period: string) => /present|expected/i.test(period);

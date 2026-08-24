@@ -12,7 +12,7 @@ import ThemeToggle from './ThemeToggle.astro';
       <ul class="nav__list" role="list">
         {
           sections.map((section) => (
-            <li>
+            <li class:list={[!section.compact && 'nav__item--wide']}>
               <a class="nav__link" href={`#${section.id}`} data-nav-link={section.id}>
                 {section.label}
               </a>
@@ -105,6 +105,17 @@ import ThemeToggle from './ThemeToggle.astro';
 
   .nav__link[aria-current='true'] {
     color: var(--c-ink);
+  }
+
+  /*
+   * Seven destinations crowd a phone. Interests and Skills drop out below
+   * 46rem, leaving About, Projects, Experience, Publications and Contact;
+   * both sections are still reachable by scrolling.
+   */
+  @media (max-width: 46rem) {
+    .nav__item--wide {
+      display: none;
+    }
   }
 
   @media (max-width: 40rem) {
