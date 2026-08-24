@@ -207,9 +207,9 @@ const jsonLd = {
           src={portraitContact}
           alt={`${person.fullName}, photographed outdoors.`}
           variant="b"
-          ratio="1 / 1"
-          widths={[220, 340, 480, 660]}
-          sizes="(min-width: 40rem) 10.5rem, 9rem"
+          ratio="4 / 5"
+          widths={[240, 360, 520, 720]}
+          sizes="(min-width: 40rem) 11.5rem, 10rem"
         />
       </div>
     </section>
@@ -422,7 +422,7 @@ const jsonLd = {
    * emitted by a child component.
    */
   .contact :global(.contact__portrait) {
-    inline-size: 9rem;
+    inline-size: 10rem;
   }
 
   @media (min-width: 40rem) {
@@ -432,7 +432,7 @@ const jsonLd = {
     }
 
     .contact :global(.contact__portrait) {
-      inline-size: 10.5rem;
+      inline-size: 11.5rem;
     }
   }
 
