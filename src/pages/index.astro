@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Accordion from '../components/Accordion.astro';
 import IconLink from '../components/IconLink.astro';
@@ -24,10 +24,6 @@ import portrait from '../assets/images/joel-portrait.jpg';
 import portraitContact from '../assets/images/joel-portrait-contact.jpg';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const slides = await Promise.all(
-  projects.map(async (project) => ({ Content: (await render(project)).Content }))
-);
-
 /*
  * Split into two independent stacks so an open disclosure grows only its own
  * column. A two-column grid over one list would share rows, leaving a gap
@@ -152,7 +148,7 @@ const jsonLd = {
     <section id="projects" class="section" aria-labelledby="projects-title">
       <h2 id="projects-title" class="section__title">Projects</h2>
       <div class="section__body">
-        <ProjectSlider projects={projects} slides={slides} />
+        <ProjectSlider projects={projects} />
       </div>
     </section>
 

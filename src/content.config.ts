@@ -17,6 +17,11 @@ const projects = defineCollection({
      * leave it out rather than estimating.
      */
     outcome: z.string().optional(),
+    /**
+     * Short scope qualifier, shown quietly under the outcome. Use it where a
+     * figure would otherwise read as a production claim.
+     */
+    note: z.string().optional(),
     /** Primary link shown next to the title. */
     repo: z.url().optional(),
     /** Ascending display order. */

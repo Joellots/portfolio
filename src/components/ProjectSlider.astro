@@ -7,14 +7,12 @@
  * buttons and dots on top of that.
  */
 import type { CollectionEntry } from 'astro:content';
-import Accordion from './Accordion.astro';
 
 interface Props {
   projects: readonly CollectionEntry<'projects'>[];
-  slides: readonly { readonly Content: any }[];
 }
 
-const { projects, slides } = Astro.props;
+const { projects } = Astro.props;
 ---
 
 <div class="slider" data-slider>
@@ -30,44 +28,39 @@ const { projects, slides } = Astro.props;
          with the listitem role an <ol> requires of its children. -->
     <div class="slider__track">
       {
-        projects.map((project, i) => {
-          const Content = slides[i]!.Content;
-          return (
-            <div
-              class="slide"
-              role="group"
-              aria-roledescription="slide"
-              aria-label={`${i + 1} of ${projects.length}: ${project.data.title}`}
-              data-slide
-            >
-              <div class="slide__inner">
-                <div class="slide__head">
-                  <h3 class="slide__title">{project.data.title}</h3>
-                  <p class="slide__period">{project.data.period}</p>
-                  {project.data.repo && (
-                    <a
-                      class="slide__link"
-                      href={project.data.repo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Source on GitHub <span aria-hidden="true">→</span>
-                    </a>
-                  )}
-                </div>
+        projects.map((project, i) => (
+          <div
+            class="slide"
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${i + 1} of ${projects.length}: ${project.data.title}`}
+            data-slide
+          >
+            <div class="slide__inner">
+              <div class="slide__head">
+                <h3 class="slide__title">{project.data.title}</h3>
+                <p class="slide__period">{project.data.period}</p>
+                {project.data.repo && (
+                  <a
+                    class="slide__link"
+                    href={project.data.repo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Source on GitHub <span aria-hidden="true">→</span>
+                  </a>
+                )}
+              </div>
 
-                <div class="slide__body">
-                  <p class="slide__purpose">{project.data.purpose}</p>
-                  <p class="slide__meta">{project.data.contribution}</p>
-                  {project.data.outcome && <p class="slide__meta">{project.data.outcome}</p>}
-                  <Accordion label="How it works">
-                    <Content />
-                  </Accordion>
-                </div>
+              <div class="slide__body">
+                <p class="slide__purpose">{project.data.purpose}</p>
+                <p class="slide__meta">{project.data.contribution}</p>
+                {project.data.outcome && <p class="slide__meta">{project.data.outcome}</p>}
+                {project.data.note && <p class="slide__note">{project.data.note}</p>}
               </div>
             </div>
-          );
-        })
+          </div>
+        ))
       }
     </div>
   </div>
@@ -182,6 +175,13 @@ const { projects, slides } = Astro.props;
     font-size: var(--t-small);
     line-height: 1.65;
     color: var(--c-ink-muted);
+  }
+
+  .slide__note {
+    margin-block-start: var(--s-4);
+    font-size: var(--t-micro);
+    line-height: 1.6;
+    color: var(--c-ink-faint);
   }
 
   @media (min-width: 48rem) {

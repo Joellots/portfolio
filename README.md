@@ -100,16 +100,20 @@ period: '2025 – 2026'
 purpose: 'One sentence: what it is for.'
 contribution: 'One or two sentences: what I actually did.'
 outcome: 'Optional. Only when a source backs it up.' # omit rather than estimate
+note: 'Optional scope qualifier, shown quietly under the outcome.'
 repo: 'https://github.com/...'
 order: 1
 ---
 ```
 
-The Markdown body becomes the accordion panel: architecture, method, datasets,
-evaluation, and limits. Keep links in frontmatter rather than the body so they
-stay correct under a base path.
+Everything shown comes from frontmatter; the Markdown body is unused, since
+implementation detail lives on GitHub rather than on the page. Adding a project
+means adding a file and giving it an unused `order`.
 
-Adding a project means adding a file and giving it an unused `order`.
+**If the projects disappear from `npm run dev`,** the content store has gone
+stale — this happens when `content.config.ts` or the Markdown files change
+while the dev server is running. Stop it, delete `.astro/`, and start it again.
+Builds are never affected.
 
 ## Deployment
 
