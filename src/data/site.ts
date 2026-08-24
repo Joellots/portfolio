@@ -9,7 +9,7 @@ export interface Link {
   readonly label: string;
   readonly href: string;
   /** Icon key resolved by src/components/IconLink.astro. */
-  readonly icon: 'email' | 'github' | 'linkedin' | 'scholar' | 'orcid';
+  readonly icon: 'telegram' | 'email' | 'github' | 'linkedin' | 'scholar';
 }
 
 export interface Role {
@@ -88,6 +88,7 @@ export const about: readonly string[] = [
 /* ------------------------------------------------------------------ links */
 
 export const links: readonly Link[] = [
+  { label: 'Telegram', href: 'https://t.me/JoelOkore', icon: 'telegram' },
   { label: 'Email', href: `mailto:${person.email}`, icon: 'email' },
   { label: 'GitHub', href: 'https://github.com/Joellots', icon: 'github' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/joel-okore/', icon: 'linkedin' },
@@ -96,7 +97,6 @@ export const links: readonly Link[] = [
     href: 'https://scholar.google.com/citations?user=t1JDwE8AAAAJ&hl=en',
     icon: 'scholar',
   },
-  { label: 'ORCID', href: 'https://orcid.org/0009-0003-9896-6902', icon: 'orcid' },
 ];
 
 /* -------------------------------------------------------------- interests */

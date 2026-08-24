@@ -62,7 +62,7 @@ Nearly everything lives in **[`src/data/site.ts`](src/data/site.ts)**:
 | Name, title, email, CV path, meta description    | `person`       |
 | Hero paragraph                                   | `heroIntro`    |
 | About paragraphs                                 | `about`        |
-| Email, GitHub, LinkedIn, Scholar, ORCID          | `links`        |
+| Telegram, Email, GitHub, LinkedIn, Scholar       | `links`        |
 | Research interests                               | `interests`    |
 | Roles                                            | `experience`   |
 | Papers, DOI, plain-English summary, detail panel | `publications` |

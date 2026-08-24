@@ -6,7 +6,7 @@
 interface Props {
   href: string;
   label: string;
-  icon: 'email' | 'github' | 'linkedin' | 'scholar' | 'orcid';
+  icon: 'telegram' | 'email' | 'github' | 'linkedin' | 'scholar';
 }
 const { href, label, icon } = Astro.props;
 const external = !href.startsWith('mailto:');
@@ -57,13 +57,11 @@ const external = !href.startsWith('mailto:');
       )
     }
     {
-      icon === 'orcid' && (
-        <g fill="none" stroke="currentColor" stroke-width="1.7">
-          <circle cx="12" cy="12" r="9.3" />
-          <path d="M8.6 8.3v7.4" stroke-linecap="round" />
-          <circle cx="8.6" cy="6" r="0.9" fill="currentColor" stroke="none" />
-          <path d="M12.4 15.7V8.3h2.2a3.7 3.7 0 0 1 0 7.4h-2.2Z" stroke-linejoin="round" />
-        </g>
+      icon === 'telegram' && (
+        <path
+          fill="currentColor"
+          d="M21.6 3.3 2.4 10.7c-1.1.44-1.1 1.06-.2 1.33l4.9 1.53 1.9 5.8c.23.63.11.88.77.88.51 0 .74-.23 1.02-.51l2.35-2.29 4.9 3.62c.9.5 1.55.24 1.77-.84l3.2-15.1c.33-1.32-.5-1.92-1.41-1.5Zm-11.8 11.9-.31 3.6-1.35-4.2 10.4-6.4c.45-.28.87-.13.53.18l-9.27 6.82Z"
+        />
       )
     }
   </svg>
