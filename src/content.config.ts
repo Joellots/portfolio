@@ -8,7 +8,10 @@ const projects = defineCollection({
   schema: z.object({
     title: z.string(),
     period: z.string(),
-    /** One sentence: what the project is for. */
+    /**
+     * The lead line under the project name: either one sentence on what the
+     * project is for, or, where the work has a formal title, that title.
+     */
     purpose: z.string(),
     /** One or two sentences: what I actually did. */
     contribution: z.string(),
