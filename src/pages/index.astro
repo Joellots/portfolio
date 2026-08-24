@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Accordion from '../components/Accordion.astro';
 import IconLink from '../components/IconLink.astro';
 import Portrait from '../components/Portrait.astro';
+import SkillIcon from '../components/SkillIcon.astro';
 import ExperienceTabs from '../components/ExperienceTabs.astro';
 import ProjectSlider from '../components/ProjectSlider.astro';
 import {
@@ -20,7 +21,7 @@ import {
 } from '../data/site';
 import { url, absoluteUrl } from '../lib/url';
 import portrait from '../assets/images/joel-portrait.jpg';
-import portraitAbout from '../assets/images/joel-portrait-about.jpg';
+import portraitContact from '../assets/images/joel-portrait-contact.jpg';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const slides = await Promise.all(
@@ -95,19 +96,10 @@ const jsonLd = {
     <!-- ========================================================== about -->
     <section id="about" class="section" aria-labelledby="about-title">
       <h2 id="about-title" class="section__title">About</h2>
-      <div class="section__body about">
+      <div class="section__body">
         <div class="prose">
           {about.map((paragraph) => <p>{paragraph}</p>)}
         </div>
-        <Portrait
-          class="about__portrait"
-          src={portraitAbout}
-          alt={`${person.fullName}, photographed outdoors.`}
-          variant="b"
-          ratio="1 / 1"
-          widths={[280, 420, 560]}
-          sizes="(min-width: 62rem) 15rem, (min-width: 40rem) 30vw, 62vw"
-        />
       </div>
     </section>
 
@@ -129,6 +121,7 @@ const jsonLd = {
           {
             skills.map((group) => (
               <Accordion label={group.name} variant="row" headingLevel={3}>
+                <SkillIcon slot="icon" name={group.icon} />
                 <ul class="chips chips--quiet" role="list">
                   {group.items.map((item) => (
                     <li class="chip">{item}</li>
@@ -193,20 +186,31 @@ const jsonLd = {
     <!-- ======================================================== contact -->
     <section id="contact" class="section" aria-labelledby="contact-title">
       <h2 id="contact-title" class="section__title">Contact</h2>
-      <div class="section__body">
-        <p class="contact__lead">
-          The quickest way to reach me is email. I am glad to talk about research, collaboration, or
-          anything on this page.
-        </p>
-        <ul class="iconrow" role="list">
-          {
-            links.map((link) => (
-              <li>
-                <IconLink href={link.href} label={link.label} icon={link.icon} />
-              </li>
-            ))
-          }
-        </ul>
+      <div class="section__body contact">
+        <div>
+          <p class="contact__lead">
+            The quickest way to reach me is email. I am glad to talk about research, collaboration,
+            or anything on this page.
+          </p>
+          <ul class="iconrow" role="list">
+            {
+              links.map((link) => (
+                <li>
+                  <IconLink href={link.href} label={link.label} icon={link.icon} />
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <Portrait
+          class="contact__portrait"
+          src={portraitContact}
+          alt={`${person.fullName}, photographed outdoors.`}
+          variant="b"
+          ratio="1 / 1"
+          widths={[220, 340, 480, 660]}
+          sizes="(min-width: 40rem) 10.5rem, 9rem"
+        />
       </div>
     </section>
   </div>
@@ -265,7 +269,7 @@ const jsonLd = {
     text-decoration-color: var(--c-rule-strong);
   }
 
-  .hero__portrait {
+  .hero :global(.hero__portrait) {
     max-inline-size: 15rem;
     margin-inline: auto;
   }
@@ -276,7 +280,7 @@ const jsonLd = {
       gap: var(--s-8);
     }
 
-    .hero__portrait {
+    .hero :global(.hero__portrait) {
       inline-size: clamp(10.5rem, 25vw, 16rem);
       max-inline-size: none;
       margin-inline: 0;
@@ -314,31 +318,6 @@ const jsonLd = {
 
     .section__body {
       margin-block-start: 0;
-    }
-  }
-
-  /* ---------------------------------------------------------- about */
-
-  .about {
-    display: grid;
-    gap: var(--s-7);
-  }
-
-  .about__portrait {
-    max-inline-size: 15rem;
-  }
-
-  @media (min-width: 40rem) {
-    .about {
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: var(--s-8);
-      align-items: start;
-    }
-
-    .about__portrait {
-      inline-size: clamp(9rem, 22vw, 15rem);
-      max-inline-size: none;
-      margin-block-start: 0.5rem;
     }
   }
 
@@ -430,6 +409,32 @@ const jsonLd = {
   }
 
   /* ---------------------------------------------------------- contact */
+
+  .contact {
+    display: grid;
+    gap: var(--s-6);
+    align-items: center;
+  }
+
+  /*
+   * Portrait renders its own root element, so these sizing rules have to be
+   * global to reach it — a component's scoped styles do not apply to markup
+   * emitted by a child component.
+   */
+  .contact :global(.contact__portrait) {
+    inline-size: 9rem;
+  }
+
+  @media (min-width: 40rem) {
+    .contact {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--s-8);
+    }
+
+    .contact :global(.contact__portrait) {
+      inline-size: 10.5rem;
+    }
+  }
 
   .contact__lead {
     max-inline-size: var(--w-text);

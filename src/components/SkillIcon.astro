@@ -1,0 +1,59 @@
+---
+interface Props {
+  name: 'code' | 'model' | 'shield' | 'stack';
+}
+const { name } = Astro.props;
+---
+
+<svg
+  class="skill-icon"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.7"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  {/* Angle brackets and a slash: source code. */}
+  {name === 'code' && <path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5.5l-3 13" />}
+
+  {/* Axis with a rising trend and two points: data and models. */}
+  {
+    name === 'model' && (
+      <>
+        <path d="M4 4v15.2a.8.8 0 0 0 .8.8H20" />
+        <path d="m7.4 15.6 3.6-4.4 3 2.4 4.4-6" />
+        <circle cx="11" cy="11.2" r="1.5" fill="currentColor" stroke="none" />
+        <circle cx="18.4" cy="7.6" r="1.5" fill="currentColor" stroke="none" />
+      </>
+    )
+  }
+
+  {/* Shield: security. */}
+  {
+    name === 'shield' && (
+      <path d="M12 3.2 4.8 6v5.8c0 4.2 3 7.4 7.2 9 4.2-1.6 7.2-4.8 7.2-9V6L12 3.2Z" />
+    )
+  }
+
+  {/* Stacked layers: infrastructure. */}
+  {
+    name === 'stack' && (
+      <>
+        <path d="M12 3.4 3.2 7.6 12 11.8l8.8-4.2L12 3.4Z" />
+        <path d="m3.2 12 8.8 4.2 8.8-4.2M3.2 16.4 12 20.6l8.8-4.2" />
+      </>
+    )
+  }
+</svg>
+
+<style>
+  .skill-icon {
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+    flex: none;
+    color: var(--c-accent);
+  }
+</style>

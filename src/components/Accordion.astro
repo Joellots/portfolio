@@ -28,6 +28,7 @@ const Heading = headingLevel ? (`h${headingLevel}` as 'h3' | 'h4') : null;
         stroke-linecap="round"
         stroke-linejoin="round"></path>
     </svg>
+    <slot name="icon" />
     {
       Heading ? (
         <Heading class="disc__label">{label}</Heading>

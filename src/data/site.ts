@@ -43,6 +43,8 @@ export interface Publication {
 
 export interface SkillGroup {
   readonly name: string;
+  /** Glyph key resolved by src/components/SkillIcon.astro. */
+  readonly icon: 'code' | 'model' | 'shield' | 'stack';
   readonly items: readonly string[];
 }
 
@@ -177,14 +179,17 @@ export const publications: readonly Publication[] = [
 export const skills: readonly SkillGroup[] = [
   {
     name: 'Programming languages',
+    icon: 'code',
     items: ['Python', 'Bash', 'C / C++', 'JavaScript', 'SQL'],
   },
   {
     name: 'Machine learning & data science',
+    icon: 'model',
     items: ['PyTorch', 'Scikit-learn', 'Pandas', 'NumPy', 'Matplotlib', 'SHAP', 'LIME'],
   },
   {
     name: 'Cybersecurity & systems',
+    icon: 'shield',
     items: [
       'Network security',
       'Malware analysis',
@@ -196,6 +201,7 @@ export const skills: readonly SkillGroup[] = [
   },
   {
     name: 'Infrastructure & observability',
+    icon: 'stack',
     items: ['Docker', 'Kubernetes', 'Kafka', 'Git', 'CI/CD', 'Prometheus', 'Grafana', 'ELK Stack'],
   },
 ];

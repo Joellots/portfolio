@@ -74,10 +74,11 @@ Other files:
 - **CV PDF** — `public/cv/Okore-Joel-Chidike-CV.pdf` (keep the filename, or
   update `person.cvPath`)
 - **Portraits** — `src/assets/images/joel-portrait.jpg` (4:5, hero) and
-  `joel-portrait-about.jpg` (1:1, About). Both are masked into an organic shape
-  by `src/components/Portrait.astro`, which also draws the offset accent shape
-  behind them; pass `variant="a"` or `"b"` to pick a shape. Alt text is set in
-  `src/pages/index.astro`.
+  `joel-portrait-contact.jpg` (1:1, Contact). Both are masked into an organic
+  shape by `src/components/Portrait.astro`, which also draws the offset accent
+  shape behind them; pass `variant="a"` or `"b"` to pick a shape. Sizing lives
+  in `src/pages/index.astro` and must use `:global()`, because a component's
+  scoped styles do not reach markup emitted by a child component.
 - **Social card** — `public/og/joel-okore-og.jpg`; regenerate with
   `./scripts/generate-og.sh` (needs ImageMagick and `fonttools`)
 - **Favicon** — `public/favicon.svg` (a "J" monogram tile). The header uses a
