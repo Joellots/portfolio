@@ -28,6 +28,16 @@ const slides = await Promise.all(
   projects.map(async (project) => ({ Content: (await render(project)).Content }))
 );
 
+/*
+ * Split into two independent stacks so an open disclosure grows only its own
+ * column. A two-column grid over one list would share rows, leaving a gap
+ * beside whichever row was expanded.
+ */
+const skillStacks = [
+  skills.slice(0, Math.ceil(skills.length / 2)),
+  skills.slice(Math.ceil(skills.length / 2)),
+];
+
 const academic = education.map((study) => ({
   period: study.period,
   title: study.degree,
@@ -119,24 +129,28 @@ const jsonLd = {
       <div class="section__body">
         <div class="skills">
           {
-            skills.map((group) => (
-              <Accordion label={group.name} variant="row" headingLevel={3}>
-                <SkillIcon slot="icon" name={group.icon} />
-                <ul class="chips chips--quiet" role="list">
-                  {group.items.map((item) => (
-                    <li class="chip">{item}</li>
-                  ))}
-                </ul>
-              </Accordion>
+            skillStacks.map((stack) => (
+              <div class="skills__stack">
+                {stack.map((group) => (
+                  <Accordion label={group.name} variant="row" headingLevel={3}>
+                    <SkillIcon slot="icon" name={group.icon} />
+                    <ul class="chips chips--quiet" role="list">
+                      {group.items.map((item) => (
+                        <li class="chip">{item}</li>
+                      ))}
+                    </ul>
+                  </Accordion>
+                ))}
+              </div>
             ))
           }
         </div>
       </div>
     </section>
 
-    <!-- =========================================================== work -->
-    <section id="work" class="section" aria-labelledby="work-title">
-      <h2 id="work-title" class="section__title">Selected work</h2>
+    <!-- ======================================================= projects -->
+    <section id="projects" class="section" aria-labelledby="projects-title">
+      <h2 id="projects-title" class="section__title">Projects</h2>
       <div class="section__body">
         <ProjectSlider projects={projects} slides={slides} />
       </div>
@@ -350,6 +364,18 @@ const jsonLd = {
 
   .skills {
     display: grid;
+    gap: 0 var(--s-7);
+  }
+
+  .skills__stack {
+    display: grid;
+    align-content: start;
+  }
+
+  @media (min-width: 48rem) {
+    .skills {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   /* --------------------------------------------------- publications */

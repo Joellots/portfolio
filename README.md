@@ -36,7 +36,7 @@ The `/portfolio/` path is the GitHub Pages project-site base path. See
 
 A single page, `src/pages/index.astro`, with anchor navigation:
 
-`#about` · `#interests` · `#skills` · `#work` · `#experience` ·
+`#about` · `#interests` · `#skills` · `#projects` · `#experience` ·
 `#publications` · `#contact`
 
 Three interactive pieces, each degrading cleanly without JavaScript:
@@ -50,8 +50,11 @@ Three interactive pieces, each degrading cleanly without JavaScript:
   arrow/Home/End keys). Without JavaScript both panels simply render in
   sequence.
 - **`ProjectSlider.astro`** is a CSS scroll-snap track, so it swipes and
-  scrolls natively; the arrows and dots are hidden until the script attaches
-  them.
+  scrolls natively; the arrows, position counter and dots are hidden until the
+  script attaches them.
+
+Skills render as two independent stacks rather than a two-column grid over one
+list, so opening a disclosure grows only its own column.
 
 ## Where to edit your information
 

@@ -232,7 +232,7 @@ export const sections: readonly { readonly id: string; readonly label: string }[
   { id: 'about', label: 'About' },
   { id: 'interests', label: 'Interests' },
   { id: 'skills', label: 'Skills' },
-  { id: 'work', label: 'Work' },
+  { id: 'projects', label: 'Projects' },
   { id: 'experience', label: 'Experience' },
   { id: 'publications', label: 'Publications' },
   { id: 'contact', label: 'Contact' },

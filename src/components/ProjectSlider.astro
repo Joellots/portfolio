@@ -23,7 +23,7 @@ const { projects, slides } = Astro.props;
     data-slider-viewport
     role="group"
     aria-roledescription="carousel"
-    aria-label="Selected work"
+    aria-label="Projects"
     tabindex="0"
   >
     <!-- Not a list: each slide carries role="group", which would conflict
@@ -84,6 +84,10 @@ const { projects, slides } = Astro.props;
           stroke-linejoin="round"></path>
       </svg>
     </button>
+
+    <p class="counter mono" aria-hidden="true">
+      <span data-slider-position>1</span> / {projects.length}
+    </p>
 
     <ol class="dots" role="list">
       {
@@ -229,6 +233,13 @@ const { projects, slides } = Astro.props;
     cursor: default;
   }
 
+  .counter {
+    font-size: var(--t-micro);
+    color: var(--c-ink-faint);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
   .dots {
     display: flex;
     align-items: center;
@@ -285,7 +296,10 @@ const { projects, slides } = Astro.props;
 
     let index = 0;
 
+    const position = root.querySelector<HTMLElement>('[data-slider-position]');
+
     const paint = () => {
+      if (position) position.textContent = String(index + 1);
       dots.forEach((dot, i) => {
         if (i === index) dot.setAttribute('aria-current', 'true');
         else dot.removeAttribute('aria-current');
