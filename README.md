@@ -155,10 +155,15 @@ SITE_URL="https://joellots.github.io" BASE_PATH="/portfolio" npm run build
 
 ### Troubleshooting
 
-**`Get Pages site failed … Not Found`** — Pages is not enabled on the
-repository. The workflow passes `enablement: true` to `configure-pages`, which
-turns it on; if it still fails, set Settings → Pages → Source to
-**GitHub Actions** by hand and re-run.
+**`Get Pages site failed … Not Found`**, or **`Create Pages site failed …
+Resource not accessible by integration`** — Pages has never been switched on
+for the repository. A workflow cannot switch it on itself: the default
+`GITHUB_TOKEN` has no permission to create a Pages site, so
+`actions/configure-pages` with `enablement: true` fails too. That step is not
+in this workflow for exactly that reason.
+
+Fix it once, by hand: **Settings → Pages → Build and deployment → Source →
+GitHub Actions**. Then re-run the workflow from the Actions tab.
 
 ## Design notes
 

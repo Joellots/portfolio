@@ -24,14 +24,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Configure GitHub Pages
-        id: pages
-        uses: actions/configure-pages@v6
-        with:
-          # Turns Pages on if it is not already, instead of failing with a 404
-          # from the Pages API on a fresh repository.
-          enablement: true
-
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
@@ -48,10 +40,10 @@ jobs:
         run: npm run check
 
       - name: Build
-        # The custom domain in public/CNAME is the canonical home, so the site
-        # URL is fixed here rather than read from `configure-pages`. Reading it
-        # would produce joellots.github.io/<repo> on any run made before the
-        # domain is attached, baking a wrong base path into every asset URL.
+        # public/CNAME is the canonical home, so the site URL is fixed here.
+        # Deriving it from the repository would give joellots.github.io/portfolio
+        # whenever the domain is detached, baking a wrong base path into every
+        # asset URL.
         env:
           SITE_URL: https://joelokore.tech
           BASE_PATH: ''
