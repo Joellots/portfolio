@@ -1,9 +1,9 @@
 ---
 title: 'Aegis'
 period: '2025 – 2026'
-purpose: 'Finds malware hiding in encrypted HTTPS traffic, explains why it flagged each connection, and only lets the automated response fire when the evidence holds up.'
-contribution: 'My MSc thesis at Innopolis University, written with Isaac Womoakor. I built the detection and explanation side. The automated response layer was joint work, and I owned the logic that decides whether a detection is trusted enough to act on.'
-outcome: 'Macro-averaged F1 of 0.972 on held-out data, at a false-positive rate of about two per cent. In an end-to-end simulation with a previously unseen command-and-control implant, the pipeline processed every flow without failing.'
+purpose: 'Real-time detection of malicious HTTPS traffic from flow-level metadata, with every verdict explained in MITRE ATT&CK terms and automated response gated on the strength of that evidence.'
+contribution: 'MSc thesis at Innopolis University, with Isaac Womoakor. I built the detection and explainability stack: the NFStream feature pipeline, model selection and training, and the empirically validated feature-to-ATT&CK mapping. The SOAR response layer was co-developed, and I owned the trust-gating logic that sits between a verdict and enforcement.'
+outcome: 'Macro-averaged F1 of 0.972 on held-out data at a false-positive rate near two per cent. The feature-to-technique map rested on fourteen associations agreed by four independent lines of evidence, with bootstrap stabilities between 0.90 and 1.00.'
 repo: 'https://github.com/Joellots/Aegis'
 order: 1
 ---

@@ -160,12 +160,12 @@ export const publications: readonly Publication[] = [
     year: '2026',
     doi: 'https://doi.org/10.1109/USBEREIT70063.2026.11580625',
     plain:
-      'How to explain why a model flagged encrypted traffic as malicious, quickly enough to be useful while someone is still working through an alert queue.',
+      'An explainable ML framework for detecting malicious encrypted traffic from flow-level metadata alone, and what feature selection costs and buys in the trade-off between detection performance and interpretability.',
     details: [
-      'The paper splits explanation into two tiers. The first runs on every alert and reads contributions straight out of the model, so it is fast and gives the same answer every time. The second is slower and richer, and runs only when someone opens a case to investigate it.',
-      'Models were trained on the Composed Encrypted Malicious Traffic Dataset, which merges five public sources, using flow-level metadata only. No traffic is decrypted.',
-      'Random Forest, XGBoost and a glass-box Explainable Boosting Machine all reached F1 of at least 0.9989, so the interpretable model cost nothing in accuracy here. EBM explanations took 3.5 ms at the median, roughly 3.7× faster than SHAP.',
-      'Cutting the feature set to a nine-feature consensus subset kept that accuracy and made the explanations more consistent between runs.',
+      'A two-tier explainability pipeline. Tier 1 is fast and always on, suited to real-time SOC triage: Explainable Boosting Machine term contributions and XGBoost feature contributions, read straight out of the model rather than approximated after the fact. Tier 2 is a high-fidelity, on-demand module using SHAP and LIME for forensic investigation.',
+      'Models were trained on the Composed Encrypted Malicious Traffic Dataset, which integrates five public sources, using metadata-derived flow statistics and temporal patterns. Nothing is decrypted.',
+      'Feature selection compared ANOVA statistical filtering against SHAP importance ranking on tree-based models. Random Forest, XGBoost and the glass-box EBM all reached F1 of at least 0.9989, so on this data interpretability cost nothing in detection performance.',
+      'EBM was the fastest explainer at 3.5 ms p50 and 285 explanations per second, roughly 3.7× faster than SHAP and 1.8× faster than LIME. A nine-feature consensus subset preserved detection performance while improving explanation consistency.',
     ],
   },
 ];

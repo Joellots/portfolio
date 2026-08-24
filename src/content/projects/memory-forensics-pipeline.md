@@ -1,8 +1,8 @@
 ---
 title: 'Automated memory forensics pipeline'
 period: '2025'
-purpose: 'Captures and analyses a machine’s memory the moment an alert fires, instead of waiting for someone to do it by hand hours later.'
-contribution: 'Built it end to end on my own: the trigger, the acquisition and analysis steps, the classifier, and the response scripts.'
+purpose: 'Automated volatile-memory acquisition and analysis triggered from SIEM events, for malware detection and incident response.'
+contribution: 'Sole author. Built the Wazuh-triggered acquisition path with WinPMEM, Volatility3 artefact extraction, the ML classification workflow for malicious process identification, and the SOAR-oriented response scripts.'
 repo: 'https://github.com/Joellots/CCF-Project'
 order: 2
 ---
