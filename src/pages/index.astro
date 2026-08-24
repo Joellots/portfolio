@@ -4,12 +4,15 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Accordion from '../components/Accordion.astro';
 import IconLink from '../components/IconLink.astro';
+import Timeline from '../components/Timeline.astro';
 import {
   person,
-  heroIntro,
+  greeting,
+  tagline,
   about,
   interests,
   experience,
+  tracks,
   publications,
   education,
   links,
@@ -46,9 +49,9 @@ const jsonLd = {
   <section class="hero">
     <div class="shell hero__inner">
       <div class="hero__text">
-        <h1 class="hero__name">{person.fullName}</h1>
+        <h1 class="hero__name">{greeting}</h1>
         <p class="hero__role">{person.title}</p>
-        <p class="hero__intro">{heroIntro}</p>
+        <p class="hero__intro">{tagline}</p>
 
         <div class="hero__actions">
           <ul class="iconrow" role="list">
@@ -97,9 +100,9 @@ const jsonLd = {
         <dl class="interests">
           {
             interests.map((interest) => (
-              <div class="interests__row">
-                <dt>{interest.name}</dt>
-                <dd>{interest.detail}</dd>
+              <div class="interest">
+                <dt class="interest__name">{interest.name}</dt>
+                <dd class="interest__detail">{interest.detail}</dd>
               </div>
             ))
           }
@@ -145,21 +148,15 @@ const jsonLd = {
     <!-- ===================================================== experience -->
     <section id="experience" class="section" aria-labelledby="experience-title">
       <h2 id="experience-title" class="section__title">Experience</h2>
-      <div class="section__body">
-        <ol class="entries" role="list">
-          {
-            experience.map((role) => (
-              <li class="entry">
-                <p class="entry__period">{role.period}</p>
-                <div>
-                  <h3 class="entry__title">{role.title}</h3>
-                  <p class="entry__org">{role.org}</p>
-                  <p class="entry__summary">{role.summary}</p>
-                </div>
-              </li>
-            ))
-          }
-        </ol>
+      <div class="section__body tracks">
+        {
+          tracks.map((track) => (
+            <Timeline
+              label={track.label}
+              items={experience.filter((role) => role.track === track.id)}
+            />
+          ))
+        }
       </div>
     </section>
 
@@ -200,19 +197,14 @@ const jsonLd = {
     <section id="education" class="section" aria-labelledby="education-title">
       <h2 id="education-title" class="section__title">Education</h2>
       <div class="section__body">
-        <ol class="entries" role="list">
-          {
-            education.map((study) => (
-              <li class="entry">
-                <p class="entry__period">{study.period}</p>
-                <div>
-                  <h3 class="entry__title">{study.degree}</h3>
-                  <p class="entry__org">{study.org}</p>
-                </div>
-              </li>
-            ))
-          }
-        </ol>
+        <Timeline
+          headingLevel={3}
+          items={education.map((study) => ({
+            period: study.period,
+            title: study.degree,
+            org: study.org,
+          }))}
+        />
       </div>
     </section>
 
@@ -351,21 +343,39 @@ const jsonLd = {
   .interests {
     margin: 0;
     display: grid;
-    gap: var(--s-4);
-    max-inline-size: 40rem;
+    gap: var(--s-5) var(--s-6);
   }
 
-  .interests__row dt {
+  .interest {
+    padding-block-start: var(--s-3);
+    border-block-start: var(--hairline) solid var(--c-rule);
+  }
+
+  .interest__name {
     font-size: var(--t-base);
-    font-weight: 500;
+    font-weight: 550;
+    letter-spacing: -0.01em;
     color: var(--c-ink);
   }
 
-  .interests__row dd {
-    margin: 0.15rem 0 0;
+  .interest__detail {
+    margin: 0.3rem 0 0;
     font-size: var(--t-small);
-    line-height: 1.6;
+    line-height: 1.65;
     color: var(--c-ink-muted);
+  }
+
+  @media (min-width: 40rem) {
+    .interests {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ------------------------------------------------------------- tracks */
+
+  .tracks {
+    display: grid;
+    gap: var(--s-8);
   }
 
   /* ------------------------------------------------------------- work */

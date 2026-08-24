@@ -16,8 +16,10 @@ export interface Role {
   readonly org: string;
   readonly title: string;
   readonly period: string;
-  /** One or two lines: what I was responsible for, and what came of it. */
+  /** Written in the technical register of the CV, but not copied from it. */
   readonly summary: string;
+  /** Which timeline the role belongs to. */
+  readonly track: 'academic' | 'professional';
 }
 
 export interface Study {
@@ -57,15 +59,18 @@ export const person = {
     'Joel Okore builds and studies security systems that use machine learning, with a focus on network traffic, explainability and the graph theory behind both.',
 } as const;
 
-/** Hero. One short paragraph, plain language. */
-export const heroIntro =
-  'I build and study security systems that use machine learning. Most of my work has been on network traffic: finding malicious behaviour without decrypting anything, then making the model’s reasoning clear enough that a person can check it.';
+/** Hero greeting, shown above the tagline. */
+export const greeting = 'Hi, I’m Joel';
 
-/** About. Kept to three short paragraphs. */
+/** Supplied tagline. Used verbatim. */
+export const tagline =
+  'I’m Joel Okore, a cybersecurity and machine learning researcher exploring how graph-based methods, trustworthy AI, and secure systems can solve real-world security problems.';
+
+/** Supplied short biography. Used verbatim. */
 export const about: readonly string[] = [
-  'I finished an MSc in Security and Network Engineering at Innopolis University, and I am now doing a second MSc in Advanced Combinatorics at MIPT. The maths is deliberate. Graph structure keeps showing up in the problems I care about, so I wanted a proper grounding in it rather than a working knowledge.',
-  'Before that I spent time on the practical side: penetration testing, DevOps, and building machine learning pipelines for anomaly detection. That mix is why I care about whether a detection system can actually be run and trusted, not only whether it scores well.',
-  'I also teach. I run lab sessions and mentor students in networks, security and distributed systems, and it is reliably the best part of my week.',
+  'I am Joel Okore, a cybersecurity and machine learning researcher with a growing interest in graph-based learning, combinatorics, and trustworthy AI. My work focuses on building intelligent security systems that are practical and useful in real-world environments, particularly for detecting and responding to emerging security threats.',
+  'I hold an MSc in Security and Network Engineering from Innopolis University and am currently pursuing an MSc in Advanced Combinatorics at the Moscow Institute of Physics and Technology (MIPT), with a focus on strengthening the mathematical foundations that support my work. Beyond research, I enjoy teaching and mentoring students, particularly in computer networks, cybersecurity, and distributed systems.',
+  'I’m especially interested in problems that sit between theory and practice, bringing together graph and network theory, machine learning, and secure systems engineering to build technologies we can understand and trust.',
 ];
 
 /* ------------------------------------------------------------------ links */
@@ -92,37 +97,43 @@ export const links: readonly Link[] = [
 export const interests: readonly Interest[] = [
   {
     name: 'Machine Learning',
-    detail: 'Models that hold up outside the dataset they were trained on.',
+    detail:
+      'Models that stay reliable on data they were not trained on, and knowing why they fail when they do.',
   },
   {
     name: 'Cybersecurity',
-    detail: 'Detection, response, and the gap between a working method and a usable one.',
+    detail:
+      'Detecting and responding to emerging threats, and closing the distance between a method that works in a paper and one a team can actually run.',
   },
   {
     name: 'Graph Representation Learning',
-    detail: 'Turning structure like hosts, flows and relationships into something a model can use.',
+    detail:
+      'Encoding relationships between hosts, flows and events so that structure becomes something a model can learn from.',
   },
   {
     name: 'Graph Neural Networks',
-    detail: 'Learning directly on graphs instead of flattening them into feature vectors first.',
+    detail:
+      'Learning over graph structure directly, instead of flattening it into feature vectors and hoping the structure survives.',
   },
   {
     name: 'Temporal and Random Graphs',
     detail:
-      'Graphs that change over time, and what random models tell us about the ones that do not.',
+      'How networks change over time, and what random graph models predict about the structures we actually observe.',
   },
   {
     name: 'Network Anomaly Detection',
-    detail: 'Separating unusual from malicious, which are not the same problem.',
+    detail:
+      'Telling unusual traffic apart from malicious traffic, which is the harder half of the problem and the one that matters operationally.',
   },
   {
     name: 'Explainable Artificial Intelligence (XAI)',
     detail:
-      'Making a model’s reasoning legible, and cheap enough to produce that people actually use it.',
+      'Making a model’s reasoning legible, and cheap enough to compute that it gets used during an investigation rather than written up afterwards.',
   },
   {
     name: 'Distributed Systems',
-    detail: 'Streaming, orchestration, and keeping analysis fast when the data does not slow down.',
+    detail:
+      'Streaming architectures, orchestration and observability, so that analysis keeps pace with data that never slows down.',
   },
 ];
 
@@ -130,33 +141,43 @@ export const interests: readonly Interest[] = [
 
 export const experience: readonly Role[] = [
   {
+    track: 'academic',
     org: 'Laboratory of Information Security, Innopolis University',
     title: 'Junior Researcher & Teaching Assistant',
     period: 'Jan 2026 – Present',
     summary:
-      'Teach the practical half of several security and networking courses, from forensics and incident response to offensive security, and mentor students through their lab work. I build and maintain the environments those labs run on.',
+      'Run practical and laboratory sessions across cybersecurity, network engineering, secure software development, digital forensics, incident response and offensive security. I mentor students through TCP/UDP programming, secure network design, vulnerability analysis and incident investigation, and maintain the reproducible environments those labs depend on.',
   },
   {
+    track: 'academic',
+    org: 'Laboratory of the Faculty of Control and Automation, KNRTU',
+    title: 'Machine Learning Research Intern',
+    period: 'Jan – Apr 2024',
+    summary:
+      'Developed anomaly detection models on the KDD Cup ’99 dataset for binary and multiclass attack classification, tuned through feature engineering and hyperparameter search, and evaluated them against Zeek, Snort and Suricata. Built an interactive framework for real-time traffic analysis with automated ML lifecycle management in ZenML.',
+  },
+  {
+    track: 'professional',
     org: 'Innopolis University',
     title: 'DevOps Engineer Intern',
     period: 'May – Sep 2025',
     summary:
-      'Built GitOps delivery pipelines for Kubernetes and wired security scanning and monitoring into them. Set up Jenkins agents that scale with demand instead of sitting idle.',
+      'Built GitOps-based CI/CD workflows for Kubernetes using ArgoCD and Kustomize, with SAST and DAST security validation and Prometheus/Grafana observability wired into the pipeline. Implemented autoscaling for Jenkins agents on Kubernetes, monitored in real time for agent performance and cluster health.',
   },
   {
+    track: 'professional',
     org: 'CFSS Cyber Forensic Security Solutions',
     title: 'Penetration Tester Intern',
     period: 'Feb – May 2024',
     summary:
-      'Tested web applications and APIs for logic and configuration flaws, and wrote findings up so that both the engineers fixing them and the managers funding the fix could act on the same report.',
+      'Analysed network and web application security mechanisms with Burp Suite, ZAP and Postman to exploit logic vulnerabilities and API misconfigurations, and achieved privilege escalation on Linux through misconfiguration, kernel vulnerabilities and session hijacking. Documented methodology and remediation guidance for technical and non-technical stakeholders, cutting time-to-remediate by 25%.',
   },
-  {
-    org: 'Kazan National Research Technological University',
-    title: 'Machine Learning Research Intern',
-    period: 'Jan – Apr 2024',
-    summary:
-      'Built anomaly detection models for network intrusion data and benchmarked them against Zeek, Snort and Suricata.',
-  },
+];
+
+/** Timeline tracks, in display order. */
+export const tracks: readonly { readonly id: Role['track']; readonly label: string }[] = [
+  { id: 'academic', label: 'Academic' },
+  { id: 'professional', label: 'Professional' },
 ];
 
 /* ----------------------------------------------------------- publications */
