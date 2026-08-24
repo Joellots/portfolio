@@ -124,8 +124,11 @@ from `actions/configure-pages`. Reading it would produce
 baking a wrong base path into every asset URL.
 
 `public/CNAME` holds the domain and is copied to the site root at build time.
-GitHub Pages reads it from each deployment, so the custom domain survives
-redeploys. Do not remove it.
+It keeps the domain attached across redeploys, so do not remove it — but it
+does **not** register the domain on its own. With Actions-based publishing the
+domain must first be entered under **Settings → Pages → Custom domain**; the
+CNAME-file-only route works for branch-based publishing, not this one. Until
+that field is set, GitHub answers the domain with "Site not found".
 
 ### DNS
 
@@ -142,8 +145,11 @@ AAAA  @   2606:50c0:8002::153
 AAAA  @   2606:50c0:8003::153
 ```
 
-Optionally `CNAME  www  joellots.github.io` so `www` redirects too. Once the
-DNS check passes in Settings → Pages, tick **Enforce HTTPS**.
+Optionally `CNAME  www  joellots.github.io` so `www` redirects too.
+
+With DNS in place, enter the domain under **Settings → Pages → Custom domain**
+and save. GitHub then runs its DNS check and provisions the certificate, which
+takes a few minutes; once that is done, tick **Enforce HTTPS**.
 
 ### Serving from somewhere else
 
