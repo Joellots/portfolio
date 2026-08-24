@@ -8,7 +8,8 @@
 #   ./scripts/generate-og.sh
 #
 # The generated JPEG is committed, so this only needs re-running when the name,
-# strapline or portrait changes.
+# strapline, portrait or typeface changes. It uses the same Geist and Geist Mono
+# files the site ships, so the card and the page share a typographic voice.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -21,9 +22,12 @@ from fontTools.ttLib import TTFont
 from fontTools.varLib import instancer
 
 out = sys.argv[1]
-TTFont('src/assets/fonts/ibm-plex-mono-latin-500-normal.woff2').save(f'{out}/mono-500.ttf')
-for weight in (400, 500):
-    font = TTFont('src/assets/fonts/ibm-plex-sans-latin-wght-normal.woff2')
+
+# Both faces are variable, so pin the instances the card actually uses.
+mono = TTFont('src/assets/fonts/geist-mono-latin-wght-normal.woff2')
+instancer.instantiateVariableFont(mono, {'wght': 500}).save(f'{out}/mono-500.ttf')
+for weight in (400, 600):
+    font = TTFont('src/assets/fonts/geist-latin-wght-normal.woff2')
     instancer.instantiateVariableFont(font, {'wght': weight}).save(f'{out}/sans-{weight}.ttf')
 PY
 
@@ -47,15 +51,15 @@ convert -size 1200x630 "xc:$BG" \
   -font "$TMP/mono-500.ttf" -pointsize 22 -fill "$ACCENT" \
   -annotate +80+150 'SECURITY ENGINEER & RESEARCHER' \
   \
-  -font "$TMP/sans-500.ttf" -pointsize 76 -fill "$INK" \
-  -annotate +78+228 'Okore Joel Chidike' \
+  -font "$TMP/sans-600.ttf" -pointsize 78 -fill "$INK" \
+  -annotate +78+224 'Joel Okore' \
   \
   -fill "$RULE" -draw "rectangle 80,348 700,349" \
   \
-  -font "$TMP/sans-400.ttf" -pointsize 30 -fill "$MUTED" \
-  -annotate +80+392 'Security systems that use machine' \
-  -annotate +80+434 'learning, and the work of making' \
-  -annotate +80+476 'their decisions checkable.' \
+  -font "$TMP/sans-400.ttf" -pointsize 29 -fill "$MUTED" \
+  -annotate +80+388 'I work on cybersecurity and machine learning:' \
+  -annotate +80+428 'detecting threats, explaining what the models' \
+  -annotate +80+468 'found, and the graph theory underneath both.' \
   \
   -strip -interlace Plane -sampling-factor 4:2:0 -quality 86 public/og/joel-okore-og.jpg
 
