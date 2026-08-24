@@ -1,0 +1,316 @@
+---
+/**
+ * Two views of the same history — academic and professional — behind a tab
+ * switch, with entries alternating either side of a centre spine.
+ *
+ * Follows the WAI-ARIA tabs pattern: roving tabindex, arrow/Home/End keys,
+ * aria-selected and aria-controls. Without JavaScript both panels stay in the
+ * document and are simply shown one after the other.
+ */
+export interface HistoryItem {
+  readonly period: string;
+  readonly title: string;
+  readonly org: string;
+  readonly summary?: string;
+}
+
+interface Props {
+  academic: readonly HistoryItem[];
+  professional: readonly HistoryItem[];
+}
+
+const { academic, professional } = Astro.props;
+
+const panels = [
+  { id: 'academic', label: 'Academic', items: academic },
+  { id: 'professional', label: 'Professional', items: professional },
+] as const;
+
+const isOngoing = (period: string) => /present|expected/i.test(period);
+---
+
+<div class="tabs" data-tabs>
+  <div class="tabs__list" role="tablist" aria-label="Experience type">
+    {
+      panels.map((panel, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`tab-${panel.id}`}
+          class="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-controls={`panel-${panel.id}`}
+          tabindex={i === 0 ? 0 : -1}
+        >
+          {panel.id === 'academic' ? (
+            <svg class="tab__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path
+                d="M12 4 2.5 8.6 12 13.2l9.5-4.6L12 4Z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M6.4 10.6v3.7c0 1.6 2.5 2.9 5.6 2.9s5.6-1.3 5.6-2.9v-3.7"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          ) : (
+            <svg class="tab__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect
+                x="2.8"
+                y="7.2"
+                width="18.4"
+                height="12.6"
+                rx="2.2"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+              />
+              <path
+                d="M8.8 7.2V5.9a1.8 1.8 0 0 1 1.8-1.8h2.8a1.8 1.8 0 0 1 1.8 1.8v1.3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+            </svg>
+          )}
+          <span>{panel.label}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    panels.map((panel, i) => (
+      <div
+        role="tabpanel"
+        id={`panel-${panel.id}`}
+        class="tabs__panel"
+        aria-labelledby={`tab-${panel.id}`}
+        tabindex="0"
+        data-inactive={i === 0 ? undefined : ''}
+      >
+        <ol class="spine" role="list">
+          {panel.items.map((item, index) => (
+            <li
+              class:list={['node', isOngoing(item.period) && 'node--now']}
+              style={`--row: ${index + 1}`}
+            >
+              <div class="node__card">
+                <h3 class="node__title">{item.title}</h3>
+                <p class="node__org">{item.org}</p>
+                <p class="node__period">{item.period}</p>
+                {item.summary && <p class="node__summary">{item.summary}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  /* --------------------------------------------------------------- tabs */
+
+  .tabs__list {
+    display: flex;
+    gap: var(--s-2);
+    margin-block-end: var(--s-7);
+  }
+
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: 0.6rem 0.9rem;
+    background: none;
+    border: 0;
+    border-radius: var(--radius);
+    font-size: var(--t-small);
+    font-weight: 500;
+    color: var(--c-ink-faint);
+    cursor: pointer;
+    transition: color var(--dur-fast) var(--ease);
+  }
+
+  .tab:hover {
+    color: var(--c-ink);
+  }
+
+  .tab[aria-selected='true'] {
+    color: var(--c-accent);
+    background: var(--c-raised);
+  }
+
+  .tab__icon {
+    inline-size: 1.125rem;
+    block-size: 1.125rem;
+  }
+
+  .tabs__panel[data-inactive] {
+    display: none;
+  }
+
+  /* Without JS both panels show; the tab strip is then decorative. */
+  .tabs:not([data-ready]) .tabs__panel[data-inactive] {
+    display: block;
+    margin-block-start: var(--s-7);
+  }
+
+  /* -------------------------------------------------------------- spine */
+
+  .spine {
+    position: relative;
+    display: grid;
+    gap: var(--s-6);
+    margin: 0;
+    padding-inline-start: var(--s-5);
+  }
+
+  /* The centre line. */
+  .spine::before {
+    content: '';
+    position: absolute;
+    inset-block: 0.4rem;
+    inset-inline-start: 0;
+    inline-size: var(--hairline);
+    background: var(--c-rule);
+  }
+
+  .node {
+    position: relative;
+  }
+
+  .node::before {
+    content: '';
+    position: absolute;
+    inset-block-start: 0.45rem;
+    inset-inline-start: calc(var(--s-5) * -1);
+    inline-size: 9px;
+    block-size: 9px;
+    border-radius: 50%;
+    background: var(--c-bg);
+    box-shadow: inset 0 0 0 1.5px var(--c-rule-strong);
+    transform: translateX(-4px);
+  }
+
+  .node--now::before {
+    background: var(--c-accent);
+    box-shadow: none;
+  }
+
+  .node__title {
+    font-size: var(--t-h3);
+    font-weight: 550;
+  }
+
+  .node__org {
+    margin-block-start: 0.1rem;
+    font-size: var(--t-small);
+    color: var(--c-ink-muted);
+  }
+
+  .node__period {
+    margin-block-start: var(--s-2);
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    color: var(--c-ink-faint);
+  }
+
+  .node__summary {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-small);
+    line-height: 1.65;
+    color: var(--c-ink-muted);
+  }
+
+  /* Alternating layout once there is room for two columns. */
+  @media (min-width: 48rem) {
+    .spine {
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--s-8);
+      padding-inline-start: 0;
+      row-gap: var(--s-5);
+    }
+
+    .spine::before {
+      inset-inline-start: 50%;
+      transform: translateX(-0.5px);
+    }
+
+    /* One entry per row, alternating sides, so the rhythm is even whatever
+       the content height. */
+    .node {
+      grid-row: var(--row);
+    }
+
+    .node:nth-child(odd) {
+      grid-column: 1;
+      text-align: right;
+    }
+
+    .node:nth-child(even) {
+      grid-column: 2;
+    }
+
+    .node:nth-child(odd)::before {
+      inset-inline-start: auto;
+      inset-inline-end: calc(var(--s-8) / -2);
+      transform: translateX(50%);
+    }
+
+    .node:nth-child(even)::before {
+      inset-inline-start: calc(var(--s-8) / -2);
+      transform: translateX(-50%);
+    }
+  }
+</style>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-tabs]')) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = tabs.map((tab) =>
+      document.getElementById(tab.getAttribute('aria-controls') ?? '')
+    );
+    if (tabs.length === 0) continue;
+
+    // Only hide inactive panels once the switch is actually wired up.
+    root.setAttribute('data-ready', '');
+
+    const select = (index: number, focus = true) => {
+      tabs.forEach((tab, i) => {
+        const active = i === index;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        panels[i]?.toggleAttribute('data-inactive', !active);
+      });
+      if (focus) tabs[index]?.focus();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i, false));
+      tab.addEventListener('keydown', (event) => {
+        const keys: Record<string, number> = {
+          ArrowRight: (i + 1) % tabs.length,
+          ArrowLeft: (i - 1 + tabs.length) % tabs.length,
+          Home: 0,
+          End: tabs.length - 1,
+        };
+        const next = keys[event.key];
+        if (next === undefined) return;
+        event.preventDefault();
+        select(next);
+      });
+    });
+
+    select(0, false);
+  }
+</script>

@@ -4,15 +4,16 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Accordion from '../components/Accordion.astro';
 import IconLink from '../components/IconLink.astro';
-import Timeline from '../components/Timeline.astro';
+import ExperienceTabs from '../components/ExperienceTabs.astro';
+import ProjectSlider from '../components/ProjectSlider.astro';
 import {
   person,
   greeting,
-  tagline,
+  keywords,
   about,
   interests,
+  skills,
   experience,
-  tracks,
   publications,
   education,
   links,
@@ -21,9 +22,15 @@ import { url, absoluteUrl } from '../lib/url';
 import portrait from '../assets/images/joel-portrait.jpg';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
-const rendered = await Promise.all(
-  projects.map(async (project) => ({ project, Content: (await render(project)).Content }))
+const slides = await Promise.all(
+  projects.map(async (project) => ({ Content: (await render(project)).Content }))
 );
+
+const academic = education.map((study) => ({
+  period: study.period,
+  title: study.degree,
+  org: study.org,
+}));
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -34,7 +41,7 @@ const jsonLd = {
   url: absoluteUrl('/', Astro.site),
   image: absoluteUrl('/og/joel-okore-og.jpg', Astro.site),
   sameAs: links.filter((link) => link.icon !== 'email').map((link) => link.href),
-  knowsAbout: interests.map((interest) => interest.name),
+  knowsAbout: interests,
   alumniOf: education.map((study) => ({ '@type': 'CollegeOrUniversity', name: study.org })),
 };
 ---
@@ -49,9 +56,12 @@ const jsonLd = {
   <section class="hero">
     <div class="shell hero__inner">
       <div class="hero__text">
-        <h1 class="hero__name">{greeting}</h1>
+        <h1 class="hero__greeting">{greeting}</h1>
         <p class="hero__role">{person.title}</p>
-        <p class="hero__intro">{tagline}</p>
+
+        <ul class="hero__keywords" role="list">
+          {keywords.map((keyword) => <li>{keyword}</li>)}
+        </ul>
 
         <div class="hero__actions">
           <ul class="iconrow" role="list">
@@ -97,16 +107,29 @@ const jsonLd = {
     <section id="interests" class="section" aria-labelledby="interests-title">
       <h2 id="interests-title" class="section__title">Research interests</h2>
       <div class="section__body">
-        <dl class="interests">
+        <ul class="chips" role="list">
+          {interests.map((interest) => <li class="chip">{interest}</li>)}
+        </ul>
+      </div>
+    </section>
+
+    <!-- ========================================================= skills -->
+    <section id="skills" class="section" aria-labelledby="skills-title">
+      <h2 id="skills-title" class="section__title">Skills</h2>
+      <div class="section__body">
+        <div class="skills">
           {
-            interests.map((interest) => (
-              <div class="interest">
-                <dt class="interest__name">{interest.name}</dt>
-                <dd class="interest__detail">{interest.detail}</dd>
-              </div>
+            skills.map((group) => (
+              <Accordion label={group.name} variant="row" headingLevel={3}>
+                <ul class="chips chips--quiet" role="list">
+                  {group.items.map((item) => (
+                    <li class="chip">{item}</li>
+                  ))}
+                </ul>
+              </Accordion>
             ))
           }
-        </dl>
+        </div>
       </div>
     </section>
 
@@ -114,49 +137,15 @@ const jsonLd = {
     <section id="work" class="section" aria-labelledby="work-title">
       <h2 id="work-title" class="section__title">Selected work</h2>
       <div class="section__body">
-        <ol class="work" role="list">
-          {
-            rendered.map(({ project, Content }) => (
-              <li class="project">
-                <div class="project__head">
-                  <h3 class="project__title">{project.data.title}</h3>
-                  <span class="project__period">{project.data.period}</span>
-                </div>
-
-                <p class="project__purpose">{project.data.purpose}</p>
-                <p class="project__meta">{project.data.contribution}</p>
-                {project.data.outcome && <p class="project__outcome">{project.data.outcome}</p>}
-
-                {project.data.repo && (
-                  <p class="project__link">
-                    <a href={project.data.repo} target="_blank" rel="noopener noreferrer">
-                      Source on GitHub
-                    </a>
-                  </p>
-                )}
-
-                <Accordion label="How it works">
-                  <Content />
-                </Accordion>
-              </li>
-            ))
-          }
-        </ol>
+        <ProjectSlider projects={projects} slides={slides} />
       </div>
     </section>
 
     <!-- ===================================================== experience -->
     <section id="experience" class="section" aria-labelledby="experience-title">
       <h2 id="experience-title" class="section__title">Experience</h2>
-      <div class="section__body tracks">
-        {
-          tracks.map((track) => (
-            <Timeline
-              label={track.label}
-              items={experience.filter((role) => role.track === track.id)}
-            />
-          ))
-        }
+      <div class="section__body">
+        <ExperienceTabs academic={academic} professional={experience} />
       </div>
     </section>
 
@@ -174,7 +163,7 @@ const jsonLd = {
                 <div>
                   <h3 class="entry__title">{pub.title}</h3>
                   <p class="entry__summary">{pub.plain}</p>
-                  <p class="project__link">
+                  <p class="entry__link">
                     <a href={pub.doi} target="_blank" rel="noopener noreferrer">
                       Read the paper (DOI)
                     </a>
@@ -190,21 +179,6 @@ const jsonLd = {
             ))
           }
         </ol>
-      </div>
-    </section>
-
-    <!-- ====================================================== education -->
-    <section id="education" class="section" aria-labelledby="education-title">
-      <h2 id="education-title" class="section__title">Education</h2>
-      <div class="section__body">
-        <Timeline
-          headingLevel={3}
-          items={education.map((study) => ({
-            period: study.period,
-            title: study.degree,
-            org: study.org,
-          }))}
-        />
       </div>
     </section>
 
@@ -240,7 +214,7 @@ const jsonLd = {
     align-items: center;
   }
 
-  .hero__name {
+  .hero__greeting {
     max-inline-size: 12ch;
   }
 
@@ -252,13 +226,20 @@ const jsonLd = {
     color: var(--c-accent);
   }
 
-  .hero__intro {
+  .hero__keywords {
+    display: flex;
+    flex-wrap: wrap;
     margin-block-start: var(--s-5);
-    max-inline-size: 34rem;
-    font-family: var(--font-serif);
+    max-inline-size: 32rem;
     font-size: var(--t-lead);
-    line-height: 1.55;
+    line-height: 1.45;
     color: var(--c-ink-muted);
+  }
+
+  .hero__keywords li:not(:last-child)::after {
+    content: '·';
+    margin-inline: 0.5em;
+    color: var(--c-accent);
   }
 
   .hero__actions {
@@ -338,105 +319,38 @@ const jsonLd = {
     }
   }
 
-  /* -------------------------------------------------------- interests */
+  /* ---------------------------------------------------- chips (shared) */
 
-  .interests {
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
     margin: 0;
-    display: grid;
-    gap: var(--s-5) var(--s-6);
+    padding: 0;
   }
 
-  .interest {
-    padding-block-start: var(--s-3);
-    border-block-start: var(--hairline) solid var(--c-rule);
-  }
-
-  .interest__name {
-    font-size: var(--t-base);
-    font-weight: 550;
-    letter-spacing: -0.01em;
+  .chip {
+    padding: 0.45rem 0.85rem;
+    background: var(--c-raised);
+    border-radius: 100px;
+    font-size: var(--t-small);
+    line-height: 1.35;
     color: var(--c-ink);
   }
 
-  .interest__detail {
-    margin: 0.3rem 0 0;
-    font-size: var(--t-small);
-    line-height: 1.65;
-    color: var(--c-ink-muted);
-  }
-
-  @media (min-width: 40rem) {
-    .interests {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  /* ------------------------------------------------------------- tracks */
-
-  .tracks {
-    display: grid;
-    gap: var(--s-8);
-  }
-
-  /* ------------------------------------------------------------- work */
-
-  .work {
-    display: grid;
-    gap: var(--s-8);
-    margin: 0;
-  }
-
-  .project__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--s-3);
-  }
-
-  .project__title {
-    font-size: 1.25rem;
-    font-weight: 550;
-  }
-
-  .project__period,
-  .entry__period {
+  .chips--quiet .chip {
     font-family: var(--font-mono);
     font-size: var(--t-micro);
-    color: var(--c-ink-faint);
-  }
-
-  .project__period {
-    white-space: nowrap;
-  }
-
-  .project__purpose {
-    margin-block-start: var(--s-3);
-    max-inline-size: var(--w-text);
-    font-family: var(--font-serif);
-    font-size: var(--t-body);
-    line-height: var(--lh-prose);
-  }
-
-  .project__meta,
-  .project__outcome {
-    margin-block-start: var(--s-3);
-    max-inline-size: var(--w-text);
-    font-size: var(--t-small);
-    line-height: 1.65;
     color: var(--c-ink-muted);
   }
 
-  .project__link {
-    margin-block-start: var(--s-3);
-    font-size: var(--t-small);
+  /* --------------------------------------------------------- skills */
+
+  .skills {
+    display: grid;
   }
 
-  .project__link a {
-    color: var(--c-accent);
-    text-decoration-color: color-mix(in srgb, var(--c-accent) 40%, transparent);
-  }
-
-  /* ---------------------------------------- experience / pubs / study */
+  /* --------------------------------------------------- publications */
 
   .entries {
     display: grid;
@@ -451,17 +365,14 @@ const jsonLd = {
 
   .entry__period {
     padding-block-start: 0.2rem;
+    font-family: var(--font-mono);
+    font-size: var(--t-micro);
+    color: var(--c-ink-faint);
   }
 
   .entry__title {
     font-size: var(--t-h3);
     font-weight: 550;
-  }
-
-  .entry__org {
-    margin-block-start: 0.1rem;
-    font-size: var(--t-small);
-    color: var(--c-ink-muted);
   }
 
   .entry__summary {
@@ -470,6 +381,16 @@ const jsonLd = {
     font-size: var(--t-small);
     line-height: 1.65;
     color: var(--c-ink-muted);
+  }
+
+  .entry__link {
+    margin-block-start: var(--s-3);
+    font-size: var(--t-small);
+  }
+
+  .entry__link a {
+    color: var(--c-accent);
+    text-decoration-color: color-mix(in srgb, var(--c-accent) 40%, transparent);
   }
 
   .authors {

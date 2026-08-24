@@ -1,16 +1,12 @@
 ---
 import { person, sections } from '../data/site';
 import { url } from '../lib/url';
-import Mark from './Mark.astro';
 import ThemeToggle from './ThemeToggle.astro';
 ---
 
 <header class="masthead">
   <div class="shell masthead__inner">
-    <a class="brand" href={url('/')}>
-      <Mark size={22} />
-      <span>{person.shortName}</span>
-    </a>
+    <a class="brand" href={url('/')}>{person.shortName}</a>
 
     <nav class="nav" aria-label="Sections">
       <ul class="nav__list" role="list">
@@ -52,19 +48,17 @@ import ThemeToggle from './ThemeToggle.astro';
     min-block-size: 3.5rem;
   }
 
+  /* Wordmark only. The tile monogram lives in the favicon. */
   .brand {
-    display: flex;
-    align-items: center;
-    gap: var(--s-2);
     flex: none;
-    font-size: 1rem;
-    font-weight: 550;
-    letter-spacing: -0.015em;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     color: var(--c-ink);
     text-decoration: none;
   }
 
-  .brand :global(svg) {
+  .brand:hover {
     color: var(--c-accent);
   }
 

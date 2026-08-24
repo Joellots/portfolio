@@ -5,11 +5,19 @@
  */
 interface Props {
   label: string;
+  /**
+   * 'inline' sits under a block of prose. 'row' is a full-width list row with
+   * a rule above it, for stacked groups.
+   */
+  variant?: 'inline' | 'row';
+  /** Wraps the label in a heading so grouped disclosures join the outline. */
+  headingLevel?: 3 | 4;
 }
-const { label } = Astro.props;
+const { label, variant = 'inline', headingLevel } = Astro.props;
+const Heading = headingLevel ? (`h${headingLevel}` as 'h3' | 'h4') : null;
 ---
 
-<details class="disc">
+<details class:list={['disc', `disc--${variant}`]}>
   <summary class="disc__summary">
     <svg class="disc__chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
       <path
@@ -20,7 +28,13 @@ const { label } = Astro.props;
         stroke-linecap="round"
         stroke-linejoin="round"></path>
     </svg>
-    <span>{label}</span>
+    {
+      Heading ? (
+        <Heading class="disc__label">{label}</Heading>
+      ) : (
+        <span class="disc__label">{label}</span>
+      )
+    }
   </summary>
   <div class="disc__panel">
     <slot />
@@ -28,8 +42,40 @@ const { label } = Astro.props;
 </details>
 
 <style>
-  .disc {
+  .disc--inline {
     margin-block-start: var(--s-4);
+  }
+
+  /* Stacked group rows, e.g. skills by domain. */
+  .disc--row {
+    border-block-start: var(--hairline) solid var(--c-rule);
+  }
+
+  .disc--row .disc__summary {
+    display: flex;
+    inline-size: 100%;
+    justify-content: flex-start;
+    gap: var(--s-3);
+    padding-block: var(--s-4);
+    font-size: var(--t-base);
+    color: var(--c-ink);
+  }
+
+  .disc--row .disc__chevron {
+    inline-size: 1rem;
+    block-size: 1rem;
+    color: var(--c-ink-faint);
+  }
+
+  .disc--row .disc__label {
+    font-size: var(--t-base);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .disc--row .disc__panel {
+    padding-block: 0 var(--s-5);
+    max-inline-size: none;
   }
 
   .disc__summary {

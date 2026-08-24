@@ -36,12 +36,22 @@ The `/portfolio/` path is the GitHub Pages project-site base path. See
 
 A single page, `src/pages/index.astro`, with anchor navigation:
 
-`#about` · `#interests` · `#work` · `#experience` · `#publications` ·
-`#education` · `#contact`
+`#about` · `#interests` · `#skills` · `#work` · `#experience` ·
+`#publications` · `#contact`
 
-Secondary detail (project internals, paper findings) sits inside
-`src/components/Accordion.astro`, which wraps native `<details>`/`<summary>` so
-it is keyboard operable and announced as a disclosure with no JavaScript.
+Three interactive pieces, each degrading cleanly without JavaScript:
+
+- **`Accordion.astro`** wraps native `<details>`/`<summary>`, so disclosures
+  (project internals, paper findings, skill groups) are keyboard operable and
+  announced correctly with no script at all.
+- **`ExperienceTabs.astro`** puts education and roles behind an Academic /
+  Professional tab switch, laid out as a centre-spine timeline with entries
+  alternating sides. It follows the ARIA tabs pattern (roving tabindex,
+  arrow/Home/End keys). Without JavaScript both panels simply render in
+  sequence.
+- **`ProjectSlider.astro`** is a CSS scroll-snap track, so it swipes and
+  scrolls natively; the arrows and dots are hidden until the script attaches
+  them.
 
 ## Where to edit your information
 
@@ -67,8 +77,8 @@ Other files:
   `src/pages/index.astro`.
 - **Social card** — `public/og/joel-okore-og.jpg`; regenerate with
   `./scripts/generate-og.sh` (needs ImageMagick and `fonttools`)
-- **Favicon and mark** — `public/favicon.svg` and
-  `src/components/Mark.astro`
+- **Favicon** — `public/favicon.svg` (a "J" monogram tile). The header uses a
+  plain wordmark, no icon.
 
 ### Projects
 
@@ -151,7 +161,7 @@ Where a project has no recorded metrics, it says so instead of estimating.
 
 At the time of writing, against the built output:
 
-- Lighthouse mobile: performance 99, accessibility 100, best practices 100,
-  SEO 100
-- No horizontal overflow at 360, 414, 768, 1024 and 1440 px
+- Lighthouse mobile 99 / 100 / 100 / 100 and desktop 100 / 100 / 100 / 100
+- No horizontal overflow at 320, 360, 414, 600, 768, 1024, 1280 and 1440 px in
+  both themes
 - `npm run audit:output`: no failures

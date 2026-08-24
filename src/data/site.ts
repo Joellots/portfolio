@@ -16,10 +16,11 @@ export interface Role {
   readonly org: string;
   readonly title: string;
   readonly period: string;
-  /** Written in the technical register of the CV, but not copied from it. */
+  /**
+   * One concise line in the technical register of the CV, short enough to sit
+   * beside the timeline spine without wrapping into a wall of text.
+   */
   readonly summary: string;
-  /** Which timeline the role belongs to. */
-  readonly track: 'academic' | 'professional';
 }
 
 export interface Study {
@@ -40,9 +41,9 @@ export interface Publication {
   readonly details: readonly string[];
 }
 
-export interface Interest {
+export interface SkillGroup {
   readonly name: string;
-  readonly detail: string;
+  readonly items: readonly string[];
 }
 
 /* --------------------------------------------------------------- identity */
@@ -62,9 +63,19 @@ export const person = {
 /** Hero greeting, shown above the tagline. */
 export const greeting = 'Hi, I’m Joel';
 
-/** Supplied tagline. Used verbatim. */
-export const tagline =
-  'I’m Joel Okore, a cybersecurity and machine learning researcher exploring how graph-based methods, trustworthy AI, and secure systems can solve real-world security problems.';
+/**
+ * What I actually work on, drawn from the summary and skills sections of the
+ * CV. Shown under the greeting in place of a paragraph.
+ */
+export const keywords: readonly string[] = [
+  'Machine learning',
+  'Explainable AI',
+  'Network security',
+  'Anomaly detection',
+  'Graph theory',
+  'Security automation',
+  'DevSecOps',
+];
 
 /** Supplied short biography. Used verbatim. */
 export const about: readonly string[] = [
@@ -90,94 +101,51 @@ export const links: readonly Link[] = [
 /* -------------------------------------------------------------- interests */
 
 /*
- * Sourced from the RESEARCH INTERESTS section of _CV-OKORE.pdf. The wording of
- * each `detail` is intentionally broad: these are standing interests, not a
- * description of finished projects.
+ * Verbatim from the RESEARCH INTERESTS section of _CV-OKORE.pdf, with
+ * "Explainable AI" written out in full.
  */
-export const interests: readonly Interest[] = [
-  {
-    name: 'Machine Learning',
-    detail:
-      'Models that stay reliable on data they were not trained on, and knowing why they fail when they do.',
-  },
-  {
-    name: 'Cybersecurity',
-    detail:
-      'Detecting and responding to emerging threats, and closing the distance between a method that works in a paper and one a team can actually run.',
-  },
-  {
-    name: 'Graph Representation Learning',
-    detail:
-      'Encoding relationships between hosts, flows and events so that structure becomes something a model can learn from.',
-  },
-  {
-    name: 'Graph Neural Networks',
-    detail:
-      'Learning over graph structure directly, instead of flattening it into feature vectors and hoping the structure survives.',
-  },
-  {
-    name: 'Temporal and Random Graphs',
-    detail:
-      'How networks change over time, and what random graph models predict about the structures we actually observe.',
-  },
-  {
-    name: 'Network Anomaly Detection',
-    detail:
-      'Telling unusual traffic apart from malicious traffic, which is the harder half of the problem and the one that matters operationally.',
-  },
-  {
-    name: 'Explainable Artificial Intelligence (XAI)',
-    detail:
-      'Making a model’s reasoning legible, and cheap enough to compute that it gets used during an investigation rather than written up afterwards.',
-  },
-  {
-    name: 'Distributed Systems',
-    detail:
-      'Streaming architectures, orchestration and observability, so that analysis keeps pace with data that never slows down.',
-  },
+export const interests: readonly string[] = [
+  'Machine Learning',
+  'Cybersecurity',
+  'Graph Representation Learning',
+  'Graph Neural Networks',
+  'Temporal and Random Graphs',
+  'Network Anomaly Detection',
+  'Explainable Artificial Intelligence (XAI)',
+  'Distributed Systems',
 ];
 
 /* ------------------------------------------------------------- experience */
 
 export const experience: readonly Role[] = [
   {
-    track: 'academic',
     org: 'Laboratory of Information Security, Innopolis University',
     title: 'Junior Researcher & Teaching Assistant',
     period: 'Jan 2026 – Present',
     summary:
-      'Run practical and laboratory sessions across cybersecurity, network engineering, secure software development, digital forensics, incident response and offensive security. I mentor students through TCP/UDP programming, secure network design, vulnerability analysis and incident investigation, and maintain the reproducible environments those labs depend on.',
+      'Practical and laboratory sessions across cybersecurity, network engineering and digital forensics, and student mentoring.',
   },
   {
-    track: 'academic',
-    org: 'Laboratory of the Faculty of Control and Automation, KNRTU',
-    title: 'Machine Learning Research Intern',
-    period: 'Jan – Apr 2024',
-    summary:
-      'Developed anomaly detection models on the KDD Cup ’99 dataset for binary and multiclass attack classification, tuned through feature engineering and hyperparameter search, and evaluated them against Zeek, Snort and Suricata. Built an interactive framework for real-time traffic analysis with automated ML lifecycle management in ZenML.',
-  },
-  {
-    track: 'professional',
     org: 'Innopolis University',
     title: 'DevOps Engineer Intern',
     period: 'May – Sep 2025',
     summary:
-      'Built GitOps-based CI/CD workflows for Kubernetes using ArgoCD and Kustomize, with SAST and DAST security validation and Prometheus/Grafana observability wired into the pipeline. Implemented autoscaling for Jenkins agents on Kubernetes, monitored in real time for agent performance and cluster health.',
+      'GitOps CI/CD for Kubernetes with ArgoCD and Kustomize, plus SAST, DAST and Prometheus/Grafana observability.',
   },
   {
-    track: 'professional',
     org: 'CFSS Cyber Forensic Security Solutions',
     title: 'Penetration Tester Intern',
     period: 'Feb – May 2024',
     summary:
-      'Analysed network and web application security mechanisms with Burp Suite, ZAP and Postman to exploit logic vulnerabilities and API misconfigurations, and achieved privilege escalation on Linux through misconfiguration, kernel vulnerabilities and session hijacking. Documented methodology and remediation guidance for technical and non-technical stakeholders, cutting time-to-remediate by 25%.',
+      'Web and API security testing with Burp Suite and ZAP, Linux privilege escalation, and remediation reporting.',
   },
-];
-
-/** Timeline tracks, in display order. */
-export const tracks: readonly { readonly id: Role['track']; readonly label: string }[] = [
-  { id: 'academic', label: 'Academic' },
-  { id: 'professional', label: 'Professional' },
+  {
+    org: 'Laboratory of the Faculty of Control and Automation, KNRTU',
+    title: 'Machine Learning Research Intern',
+    period: 'Jan – Apr 2024',
+    summary:
+      'Anomaly detection models on the KDD Cup ’99 dataset, benchmarked against Zeek, Snort and Suricata.',
+  },
 ];
 
 /* ----------------------------------------------------------- publications */
@@ -198,6 +166,38 @@ export const publications: readonly Publication[] = [
       'Random Forest, XGBoost and a glass-box Explainable Boosting Machine all reached F1 of at least 0.9989, so the interpretable model cost nothing in accuracy here. EBM explanations took 3.5 ms at the median, roughly 3.7× faster than SHAP.',
       'Cutting the feature set to a nine-feature consensus subset kept that accuracy and made the explanations more consistent between runs.',
     ],
+  },
+];
+
+/* ----------------------------------------------------------------- skills */
+
+/*
+ * Grouped as in the SKILLS section of the CV. "Research Areas & Methods" is
+ * deliberately not repeated here — those already appear under interests.
+ */
+export const skills: readonly SkillGroup[] = [
+  {
+    name: 'Programming languages',
+    items: ['Python', 'Bash', 'C / C++', 'JavaScript', 'SQL'],
+  },
+  {
+    name: 'Machine learning & data science',
+    items: ['PyTorch', 'Scikit-learn', 'Pandas', 'NumPy', 'Matplotlib', 'SHAP', 'LIME'],
+  },
+  {
+    name: 'Cybersecurity & systems',
+    items: [
+      'Network security',
+      'Malware analysis',
+      'Intrusion detection',
+      'Reverse engineering',
+      'Distributed systems',
+      'Linux systems programming',
+    ],
+  },
+  {
+    name: 'Infrastructure & observability',
+    items: ['Docker', 'Kubernetes', 'Kafka', 'Git', 'CI/CD', 'Prometheus', 'Grafana', 'ELK Stack'],
   },
 ];
 
@@ -226,9 +226,9 @@ export const education: readonly Study[] = [
 export const sections: readonly { readonly id: string; readonly label: string }[] = [
   { id: 'about', label: 'About' },
   { id: 'interests', label: 'Interests' },
+  { id: 'skills', label: 'Skills' },
   { id: 'work', label: 'Work' },
   { id: 'experience', label: 'Experience' },
   { id: 'publications', label: 'Publications' },
-  { id: 'education', label: 'Education' },
   { id: 'contact', label: 'Contact' },
 ];
