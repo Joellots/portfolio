@@ -19,7 +19,7 @@ import {
   education,
   links,
 } from '../data/site';
-import { url, absoluteUrl } from '../lib/url';
+import { absoluteUrl } from '../lib/url';
 import portrait from '../assets/images/joel-portrait.jpg';
 import portraitContact from '../assets/images/joel-portrait-contact.jpg';
 
@@ -81,7 +81,6 @@ const jsonLd = {
               ))
             }
           </ul>
-          <a class="cv" href={url(person.cvPath)} download>CV (PDF)</a>
         </div>
       </div>
 
@@ -271,12 +270,6 @@ const jsonLd = {
     gap: var(--s-4);
     margin-block-start: var(--s-6);
     margin-inline-start: calc(var(--s-3) * -1);
-  }
-
-  .cv {
-    font-size: var(--t-small);
-    color: var(--c-ink-muted);
-    text-decoration-color: var(--c-rule-strong);
   }
 
   .hero :global(.hero__portrait) {

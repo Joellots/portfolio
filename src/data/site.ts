@@ -56,8 +56,6 @@ export const person = {
   shortName: 'Joel',
   title: 'Security Engineer & Researcher',
   email: 'okorejoel2017@gmail.com',
-  /** Served from public/cv/. */
-  cvPath: '/cv/Okore-Joel-Chidike-CV.pdf',
   metaDescription:
     'Joel Okore builds and studies security systems that use machine learning, with a focus on network traffic, explainability and the graph theory behind both.',
 } as const;

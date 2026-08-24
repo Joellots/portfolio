@@ -74,8 +74,6 @@ Nearly everything lives in **[`src/data/site.ts`](src/data/site.ts)**:
 
 Other files:
 
-- **CV PDF** — `public/cv/Okore-Joel-Chidike-CV.pdf` (keep the filename, or
-  update `person.cvPath`)
 - **Portraits** — `src/assets/images/joel-portrait.jpg` (4:5, hero) and
   `joel-portrait-contact.jpg` (1:1, Contact). Both are masked into an organic
   shape by `src/components/Portrait.astro`, which also draws the offset accent
