@@ -1,66 +1,69 @@
 #!/usr/bin/env bash
 # Regenerate public/og/joel-okore-og.jpg (1200x630 Open Graph card).
 #
-# Requires: ImageMagick (`convert`) and python3 + fonttools (to turn the
-# vendored woff2 subsets into TTFs that ImageMagick can render).
+# The card is rendered from scripts/og/template.html by headless Chrome, so it
+# uses the same typeface, palette and portrait shape as the site rather than a
+# separate approximation. Edit the template, not this script, to change design.
 #
-#   sudo apt install imagemagick && pip install fonttools brotli
+# Requires: google-chrome (or chromium), ImageMagick, python3 + fonttools.
 #   ./scripts/generate-og.sh
 #
-# The generated JPEG is committed, so this only needs re-running when the name,
-# strapline, portrait or typeface changes. It uses the same Geist and Geist Mono
-# files the site ships, so the card and the page share a typographic voice.
+# The generated JPEG is committed; re-run it when the name, role, tagline,
+# portrait or typeface changes.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+
+ROLE='Security Engineer &amp; Researcher'
+NAME='Joel Okore'
+TAGLINE='Exploring how graph-based methods, trustworthy AI, and secure systems can solve real-world security problems.'
+
+BG='#FCFBFA'; INK='#1A1B1D'; MUTED='#5C5F64'
+ACCENT='#B0402A'; RULE='#E6E3DF'; BLOB='#E3B5A8'
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-python3 - "$TMP" <<'PY'
-import sys
+# Portrait: same 4:5 source the hero uses, sized for the card.
+convert src/assets/images/joel-portrait.jpg -resize 700x -quality 88 "$TMP/p.jpg"
+
+ROLE="$ROLE" NAME="$NAME" TAGLINE="$TAGLINE" \
+BG="$BG" INK="$INK" MUTED="$MUTED" ACCENT="$ACCENT" RULE="$RULE" BLOB="$BLOB" \
+TMP="$TMP" python3 - <<'PY'
+import base64, os, pathlib
 from fontTools.ttLib import TTFont
 from fontTools.varLib import instancer
 
-out = sys.argv[1]
+tmp = os.environ['TMP']
 
-# Both faces are variable, so pin the instances the card actually uses.
-mono = TTFont('src/assets/fonts/geist-mono-latin-wght-normal.woff2')
-instancer.instantiateVariableFont(mono, {'wght': 500}).save(f'{out}/mono-500.ttf')
-for weight in (400, 600):
-    font = TTFont('src/assets/fonts/geist-latin-wght-normal.woff2')
-    instancer.instantiateVariableFont(font, {'wght': weight}).save(f'{out}/sans-{weight}.ttf')
+# Chrome cannot apply a variable-font weight axis from a data: URL reliably,
+# so pin the two instances the card uses and inline those.
+def instance(src, weight, out):
+    f = TTFont(src)
+    instancer.instantiateVariableFont(f, {'wght': weight}).save(out)
+    return base64.b64encode(pathlib.Path(out).read_bytes()).decode()
+
+sans = instance('src/assets/fonts/geist-latin-wght-normal.woff2', 600, f'{tmp}/sans.woff2')
+mono = instance('src/assets/fonts/geist-mono-latin-wght-normal.woff2', 500, f'{tmp}/mono.woff2')
+portrait = base64.b64encode(pathlib.Path(f'{tmp}/p.jpg').read_bytes()).decode()
+
+html = pathlib.Path('scripts/og/template.html').read_text()
+for key, value in {
+    'SANS': sans, 'MONO': mono, 'PORTRAIT': portrait,
+    'ROLE': os.environ['ROLE'], 'NAME': os.environ['NAME'],
+    'TAGLINE': os.environ['TAGLINE'],
+    'BG': os.environ['BG'], 'INK': os.environ['INK'], 'MUTED': os.environ['MUTED'],
+    'ACCENT': os.environ['ACCENT'], 'RULE': os.environ['RULE'], 'BLOB': os.environ['BLOB'],
+}.items():
+    html = html.replace(f'__{key}__', value)
+pathlib.Path(f'{tmp}/card.html').write_text(html)
 PY
 
-BG='#1B1C1F'
-INK='#E8E7E4'
-MUTED='#A8A9AC'
-ACCENT='#F0876A'
-RULE='#2E3033'
+CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+"$CHROME" --headless=new --disable-gpu --no-sandbox --hide-scrollbars \
+  --window-size=1200,630 --virtual-time-budget=5000 \
+  --screenshot="$TMP/card.png" "file://$TMP/card.html" >/dev/null 2>&1
 
-# Portrait panel: 420x630 crop of the hero portrait, dimmed toward the seam.
-convert src/assets/images/joel-portrait.jpg \
-  -resize x630 -gravity center -extent 420x630 \
-  "$TMP/portrait.png"
-
-convert -size 1200x630 "xc:$BG" \
-  \( "$TMP/portrait.png" \) -gravity east -composite \
-  -gravity northwest \
-  -fill "$RULE" -draw "rectangle 779,0 780,630" \
-  -fill "$ACCENT" -draw "rectangle 0,0 1200,5" \
-  \
-  -font "$TMP/mono-500.ttf" -pointsize 22 -fill "$ACCENT" \
-  -annotate +80+150 'SECURITY ENGINEER & RESEARCHER' \
-  \
-  -font "$TMP/sans-600.ttf" -pointsize 78 -fill "$INK" \
-  -annotate +78+224 'Joel Okore' \
-  \
-  -fill "$RULE" -draw "rectangle 80,348 700,349" \
-  \
-  -font "$TMP/sans-400.ttf" -pointsize 29 -fill "$MUTED" \
-  -annotate +80+388 'I work on cybersecurity and machine learning:' \
-  -annotate +80+428 'detecting threats, explaining what the models' \
-  -annotate +80+468 'found, and the graph theory underneath both.' \
-  \
-  -strip -interlace Plane -sampling-factor 4:2:0 -quality 86 public/og/joel-okore-og.jpg
+convert "$TMP/card.png" -strip -interlace Plane -sampling-factor 4:2:0 \
+  -quality 88 public/og/joel-okore-og.jpg
 
 echo "wrote public/og/joel-okore-og.jpg ($(du -h public/og/joel-okore-og.jpg | cut -f1))"

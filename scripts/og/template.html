@@ -1,0 +1,80 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Open Graph card</title>
+<style>
+  /* Fonts and portrait are inlined by generate-og.sh so the file renders
+     standalone, without Chrome needing local subresource access. */
+  @font-face {
+    font-family: 'Geist';
+    src: url(data:font/woff2;base64,__SANS__) format('woff2-variations');
+    font-weight: 100 900;
+  }
+  @font-face {
+    font-family: 'Geist Mono';
+    src: url(data:font/woff2;base64,__MONO__) format('woff2-variations');
+    font-weight: 100 900;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+
+  body {
+    display: grid;
+    grid-template-columns: 1fr 470px;
+    font-family: 'Geist', sans-serif;
+    background: __BG__;
+    color: __INK__;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 76px 0 76px 80px;
+  }
+
+  .eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: __ACCENT__;
+  }
+
+  h1 {
+    margin-top: 26px;
+    font-size: 84px;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  .rule { width: 560px; height: 1px; margin: 34px 0 30px; background: __RULE__; }
+
+  p { max-width: 530px; font-size: 28px; line-height: 1.45; color: __MUTED__; }
+
+  /* The organic shape and offset accent used for portraits on the site. */
+  .shot { position: relative; display: grid; place-items: center; }
+  .shot::before,
+  .shot img {
+    width: 340px;
+    height: 425px;
+    border-radius: 61% 39% 47% 53% / 38% 54% 46% 62%;
+  }
+  .shot::before {
+    content: '';
+    position: absolute;
+    background: __BLOB__;
+    transform: translate(14px, 14px);
+  }
+  .shot img { position: relative; object-fit: cover; }
+</style>
+
+<div class="text">
+  <p class="eyebrow">__ROLE__</p>
+  <h1>__NAME__</h1>
+  <div class="rule"></div>
+  <p>__TAGLINE__</p>
+</div>
+<div class="shot"><img src="data:image/jpeg;base64,__PORTRAIT__" alt="" /></div>

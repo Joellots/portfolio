@@ -77,8 +77,12 @@ Other files:
   shape behind them; pass `variant="a"` or `"b"` to pick a shape. Sizing lives
   in `src/pages/index.astro` and must use `:global()`, because a component's
   scoped styles do not reach markup emitted by a child component.
-- **Social card** — `public/og/joel-okore-og.jpg`; regenerate with
-  `./scripts/generate-og.sh` (needs ImageMagick and `fonttools`)
+- **Social card** — `public/og/joel-okore-og.jpg`. The design lives in
+  [`scripts/og/template.html`](scripts/og/template.html) and is rendered by
+  headless Chrome, so it uses the site's own typeface, palette and portrait
+  shape. Edit the template (or the copy at the top of
+  [`scripts/generate-og.sh`](scripts/generate-og.sh)), then run
+  `./scripts/generate-og.sh`. Needs Chrome, ImageMagick and `fonttools`.
 - **Favicon** — `public/favicon.svg` (a "J" monogram tile). The header uses a
   plain wordmark, no icon.
 
